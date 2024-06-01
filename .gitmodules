@@ -1,0 +1,9 @@
+[submodule "deps/nvcore"]
+	path = deps/nvcore
+	url = https://github.com/lwdjohari/nvcore.git
+[submodule "deps/nvapi"]
+	path = deps/nvapi
+	url = https://github.com/lwdjohari/nvapi.git
+[submodule "deps/h2o"]
+	path = deps/h2o
+	url = https://github.com/h2o/h2o.git
