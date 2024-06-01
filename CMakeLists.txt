@@ -68,6 +68,14 @@ endif()
 
 # Add dependencies source code
 
+# Include custom FindH2O module
+find_package(Wslay REQUIRED)
+if(NOT WSLAY_FOUND)
+    message(FATAL_ERROR "wslay library not found")
+endif()
+find_package(H2O REQUIRED)
+
+
 if (NOT nvcore_FOUND)
     add_subdirectory(deps/nvcore build-nvcore)
 endif()
@@ -85,16 +93,18 @@ file(GLOB_RECURSE SOURCES_NV_REST CONFIGURE_DEPENDS
 )
 
 
-
 add_library(${PROJECT_NAME} STATIC ${SOURCES_NV_REST} )
 target_link_libraries(${PROJECT_NAME}  
-    nvcore )
+    nvcore 
+    ${H2O_LIBRARIES}
+    )
 set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC
         src/
+        ${H2O_INCLUDE_DIRS}
 )
 
 
