@@ -4,7 +4,7 @@ project(nvrest_hello_world CXX)
 message(STATUS "NvREST - Hello World Example")
 message(STATUS "-----------------------------")
 
-if(NOT NVREST_CXX_VERSION)
+if(NOT DEFINED NVREST_CXX_VERSION)
     set(NVREST_CXX_VERSION 17)
 endif()
 if(NOT DEFINED NVREST_CXX_STANDARD_REQUIRED)
@@ -20,6 +20,9 @@ NV_DETECT_IS_ROOT_PROJECT(ISROOT)
 message(STATUS "NvRest Example Hello-world: ${ISROOT} ${NVREST_CXX_VERSION}")
 
 NV_PROPOGATE_CXX_OPTIONS(${NVREST_CXX_VERSION} ${NVREST_CXX_STANDARD_REQUIRED} ${NVREST_CXX_EXTENSIONS})
+set(CXX_FEATURE "")
+NV_GET_CXX_STD_FEATURE(${NVREST_CXX_VERSION} CXX_FEATURE)
+message(STATUS "CXX Feature: ${CXX_FEATURE}")
 
 # Main headers and sources
 file(GLOB_RECURSE NV_REST_EXAM1 CONFIGURE_DEPENDS
@@ -36,7 +39,7 @@ target_link_libraries(${PROJECT_NAME}
     ${H2O_LIBRARIES}
     )
 set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
-target_compile_features(${PROJECT_NAME} PUBLIC)
+target_compile_features(${PROJECT_NAME} PUBLIC ${CXX_FEATURE})
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC
