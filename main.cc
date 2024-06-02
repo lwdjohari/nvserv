@@ -2,8 +2,7 @@
 
 #include "nvm/io/byte_stream.h"
 #include "nvm/nvm_core.h"
-#include "nvrest/server/worker_config.h" 
-
+#include "nvrest/server/server.h"
 using namespace nvm;
 void Test() {
   std::fstream s;

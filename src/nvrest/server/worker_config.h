@@ -2,9 +2,13 @@
 #include <cstdint>
 #include <string>
 
+#include "nvrest/global_macro.h"
 #include "nvm/macro.h"
 
-namespace nvm::nvrest::server {
+
+//cppcheck-suppress unknownMacro
+NVREST_BEGIN_NAMESPACE(server)
+
 enum class WorkerType { IoWorker, FrameworkWorker };
 
 class WorkerConfig {
@@ -35,4 +39,4 @@ class WorkerConfig {
 
 };
 
-}  // namespace nvm::nvrest::server
+NVREST_END_NAMESPACE
