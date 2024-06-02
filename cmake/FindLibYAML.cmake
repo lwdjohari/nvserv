@@ -1,3 +1,4 @@
+# Original from h2o cmake
 FIND_PATH(LIBYAML_INCLUDE_DIR NAMES yaml.h)
 FIND_LIBRARY(LIBYAML_LIBRARIES NAMES yaml libyaml)
 

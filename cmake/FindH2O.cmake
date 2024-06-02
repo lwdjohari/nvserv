@@ -1,4 +1,41 @@
+# The MIT License (MIT)
+#
+# Copyright (c) 2024 Linggawasistha Djohari
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 # FindH2O.cmake - Find libh2o and its dependencies
+#
+# This module defines
+# H2O_FOUND, whether h2o is found
+# H2O_INCLUDE_DIR, h2o headers location
+# OPENSSL_LIBRARIES, openssl library to link against 
+# LIBUV_LIBRARIES, libuv library to link against
+# ZLIB_LIBRARIES, zlib library to link against
+# LIBUV_INCLUDE_DIRS, libuv headers location
+# OPENSSL_INCLUDE_DIR, openssl headers location 
+# ZLIB_INCLUDE_DIRS, zlib headers location
+#
+# Notes:
+# Currently not checking for mruby support for ruby scripting in h2o
+#
+# Linggawasistha Djohari <linggawasistha.djohari@outlook.com>, 2024
 
 # Locate the libh2o include directory
 find_path(H2O_INCLUDE_DIR
