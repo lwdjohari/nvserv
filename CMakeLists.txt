@@ -1,32 +1,50 @@
 cmake_minimum_required(VERSION 3.10)
 project(nvrest CXX)
 
-message( "NvREST REST FRAMEWORK v1")
-message( "-----------------------------")
+message( STATUS "NvREST REST FRAMEWORK v1")
+message( STATUS "-----------------------------")
 message(STATUS "NvREST LIB DIR:${CMAKE_CURRENT_SOURCE_DIR}")
-
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
+
+if(NOT NVREST_CXX_VERSION)
+    set(NVREST_CXX_VERSION 17)
+endif()
+option(NVREST_CXX_STANDARD_REQUIRED "CXX Required" ON)
+option(NVREST_CXX_EXTENSIONS "CXX Extensions" ON)
+
+include(ProjectCXX)
+set(ISROOT FALSE)
+NV_DETECT_IS_ROOT_PROJECT(ISROOT)
+message(STATUS "NvRest Root Project: ${ISROOT} ${NVREST_CXX_VERSION}")
+
+NV_PROPOGATE_CXX_OPTIONS(${NVREST_CXX_VERSION} ${NVREST_CXX_STANDARD_REQUIRED} ${NVREST_CXX_EXTENSIONS})
+
+set(CXX_FEATURE "")
+NV_GET_CXX_STD_FEATURE(${NVREST_CXX_VERSION} CXX_FEATURE)
+message(STATUS "CXX Feature: ${CXX_FEATURE}")
+
 set(ABSL_PROPAGATE_CXX_STD ON)
 
-option(LIB_NV_REST_BUILD_DOC "Build documentation" OFF)
-option(LIB_NV_REST_SANITIZE_ADDRESS "SANITIZE ADDRESS" ON)
-option(LIB_NV_REST_USE_CATCH ON)
-option(LIB_NV_REST_USE_LIB ON)
-option(LIB_NV_REST_USE_TEST ON)
+option(NV_REST_BUILD_DOC "Build documentation" OFF)
+option(NV_REST_SANITIZE_ADDRESS "SANITIZE ADDRESS" ON)
+option(NV_REST_USE_CATCH ON)
+option(NV_REST_USE_LIB ON)
+option(NV_REST_USE_TEST ON)
+option(NV_REST_BUILD_EXAMPLE ON)
 
-set(LIB_NV_REST_BUILD_DOC OFF)
-set(LIB_NV_REST_SANITIZE_ADDRESS ON)
-set(LIB_NV_REST_USE_CATCH ON)
-set(LIB_NV_REST_USE_LIB ON)
-set(LIB_NV_REST_USE_TEST OFF)
+
+set(NV_REST_BUILD_DOC OFF)
+set(NV_REST_SANITIZE_ADDRESS ON)
+set(NV_REST_USE_CATCH ON)
+set(NV_REST_USE_LIB ON)
+set(NV_REST_USE_TEST OFF)
+set(NV_REST_BUILD_EXAMPLE ON)
 
 
 # Add ASAN
-if(LIB_NV_REST_SANITIZE_ADDRESS)
+if(NV_REST_SANITIZE_ADDRESS)
     set(SANITIZE_ADDRESS ON)
-endif(LIB_NV_REST_SANITIZE_ADDRESS)
+endif(NV_REST_SANITIZE_ADDRESS)
 
 #  make ourself sanitize and sane well.
 if(NOT Sanitizers_FOUND)
@@ -34,7 +52,7 @@ if(NOT Sanitizers_FOUND)
 endif()
 
 # Add Doxygen
-if(LIB_NV_REST_BUILD_DOC)
+if(NV_REST_BUILD_DOC)
     if(NOT DOXYGEN_FOUND)
         find_package(Doxygen)
     endif()
@@ -57,10 +75,10 @@ if(LIB_NV_REST_BUILD_DOC)
     else (DOXYGEN_FOUND)
         message("Doxygen need to be installed to generate the doxygen documentation")
     endif (DOXYGEN_FOUND)
-endif(LIB_NV_REST_BUILD_DOC)
+endif(NV_REST_BUILD_DOC)
 
 # Add Unit Test Lib Catch2
-if(LIB_NV_REST_USE_CATCH)
+if(NV_REST_USE_CATCH)
  message(STATUS  "CATCH2::ADD_LIB.")
  find_package(Catch2 3 REQUIRED)
 endif()
@@ -99,8 +117,7 @@ target_link_libraries(${PROJECT_NAME}
     ${H2O_LIBRARIES}
     )
 set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
-target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
-
+target_compile_features(${PROJECT_NAME} PUBLIC ${CXX_FEATURE})
 target_include_directories(${PROJECT_NAME}
     PUBLIC
         src/
@@ -115,16 +132,22 @@ if(Sanitizers_FOUND)
 endif()
 
 target_link_libraries(${PROJECT_NAME}-test PRIVATE ${PROJECT_NAME} )
-target_compile_features(${PROJECT_NAME}-test PUBLIC cxx_std_17)
+target_compile_features(${PROJECT_NAME}-test PUBLIC ${CXX_FEATURE})
 target_include_directories("${PROJECT_NAME}-test"
     PUBLIC
         src/
 )
 
-if(LIB_NV_REST_USE_TEST)
+if(NV_REST_USE_TEST)
     message(STATUS "TEST::ADD_UNIT_TEST.")
     add_subdirectory(tests/nvrest)
 endif()       
 
 message(STATUS "NvREST LIB Configuration Done!\n")
 set(nvrest_FOUND  ON)
+
+if(NV_REST_BUILD_EXAMPLE)
+    add_subdirectory(examples/hello-world build-examples-hello-world)
+endif()
+
+message(STATUS "")
