@@ -43,10 +43,14 @@ TEST_CASE("[Router] Router thread safety test", "[Router]") {
   add_threads.emplace_back(WorkerAdd, std::ref(router),
                            "/gallery/{gid}/photo/{pid}");
   add_threads.emplace_back(WorkerAdd, std::ref(router),
+                           "/gallery/{gid}/photo/special");
+  add_threads.emplace_back(WorkerAdd, std::ref(router),
                            "/gallery/{gid}/special");
   add_threads.emplace_back(WorkerAdd, std::ref(router), "/users/{uid}/profile");
   add_threads.emplace_back(WorkerAdd, std::ref(router),
                            "/posts/{pid}/comments/{cid}");
+  add_threads.emplace_back(WorkerAdd, std::ref(router),
+                           "/users/gallery/{gid}/photo/{pid}");
 
   for (auto& thread : add_threads) {
     thread.join();
@@ -56,7 +60,7 @@ TEST_CASE("[Router] Router thread safety test", "[Router]") {
   match_threads.emplace_back(WorkerMatch, std::cref(router),
                              "/gallery/123/photo/456");
   match_threads.emplace_back(WorkerMatch, std::cref(router),
-                             "/gallery/789/special");
+                             "/gallery/789/photo/special");
   match_threads.emplace_back(WorkerMatch, std::cref(router),
                              "/users/42/profile");
   match_threads.emplace_back(WorkerMatch, std::cref(router),
@@ -65,6 +69,8 @@ TEST_CASE("[Router] Router thread safety test", "[Router]") {
                              "/gallery/111/photo/222");
   match_threads.emplace_back(WorkerMatch, std::cref(router),
                              "/gallery/123/special");
+  match_threads.emplace_back(WorkerMatch, std::cref(router),
+                             "/users/gallery/256/photo/1024");
 
   for (auto& thread : match_threads) {
     thread.join();
@@ -79,8 +85,11 @@ TEST_CASE("[Router] Router thread safety test", "[Router]") {
   REQUIRE(params["pid"] == "456");
 
   params.clear();
-  REQUIRE(router.MatchRoute("/gallery/789/special", params) != nullptr);
+  REQUIRE(router.MatchRoute("/gallery/789/photo/special", params) != nullptr);
   REQUIRE(params["gid"] == "789");
+  if(params.find("pid")!= params.end()){
+    std::cout << "ambiguity on:" << params["pid"] << std::endl;
+  }
 
   params.clear();
   REQUIRE(router.MatchRoute("/users/42/profile", params) != nullptr);
@@ -99,6 +108,13 @@ TEST_CASE("[Router] Router thread safety test", "[Router]") {
   params.clear();
   REQUIRE(router.MatchRoute("/gallery/123/special", params) != nullptr);
   REQUIRE(params["gid"] == "123");
+
+  params.clear();
+  REQUIRE(router.MatchRoute("/users/gallery/256/photo/1024", params) != nullptr);
+  REQUIRE(params["gid"] == "256");
+  REQUIRE(params["pid"] == "1024");
+
+  
 }
 
 TEST_CASE("[Router] Router handles basic dynamic route") {
