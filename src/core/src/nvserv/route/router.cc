@@ -6,6 +6,7 @@ NVREST_BEGIN_NAMESPACE(route)
 Router::Router() : root_(std::make_unique<RouterNode>()) {}
 
 void Router::AddRoute(const std::string& path, Route::HandlerFn handler) {
+  std::lock_guard<std::mutex> lock(mutex_); 
   if (!IsValidRoute(path)) {
     throw std::invalid_argument("Invalid route pattern: " + path);
   }
