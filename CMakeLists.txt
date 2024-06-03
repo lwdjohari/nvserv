@@ -1,50 +1,104 @@
 cmake_minimum_required(VERSION 3.10)
-project(nvrest CXX)
+project(nvserv CXX)
 
-message( STATUS "NvREST REST FRAMEWORK v1")
+message( STATUS "NvServ REST FRAMEWORK v1")
 message( STATUS "-----------------------------")
-message(STATUS "NvREST LIB DIR:${CMAKE_CURRENT_SOURCE_DIR}")
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
-if(NOT NVREST_CXX_VERSION)
-    set(NVREST_CXX_VERSION 17)
+# Main server development options
+option(NVSERV_SERVER_REST  "Develop for server-side or REST API server" ON)
+option(NVSERV_SERVER_GRPC "Develop for GRPC server" OFF)
+option(NVSERV_SERVER_SOCKET "Develop for SOCKET (TCP/UDP) server" OFF)
+
+# Storage feature
+option(NVSERV_FEATURE_POSTGRES "Use NVSERV postgres datalayer" ON)
+option(NVSERV_FEATURE_ORACLE "Use NVSERV oracle datalayer" OFF)
+option(NVSERV_FEATURE_MYSQL "Use NVSERV mysql compatible datalayer" OFF)
+option(NVSERV_FEATURE_SQLITE "Use NVSERV sqlite datalayer" OFF)
+option(NVSERV_FEATURE_REDIS "Use NVSERV redis datalayer" OFF)
+option(NVSERV_FEATURE_S3 "Use NVSERV S3 storage api" OFF)
+
+# Network
+option(NVSERV_FEATURE_ENVOY "Integrate Envoy Dataplane Library" OFF)
+
+# Client
+option(NVSERV_FEATURE_API_CLIENT "Http client for consuming web page or REST API" OFF)
+option(NVSERV_FEATURE_GRPC_CLIENT "GRPC client for consuming GRPC Service" OFF)
+option(NVSERV_FEATURE_MQTT_CLIENT "MQTT client for connecting to MQTT Service" OFF)
+option(NVSERV_FEATURE_RABBITMQ_CLIENT "RABBIT MQ Client for connecting RABBIT MQ" OFF)
+
+# VM
+option(NVSERV_FEATURE_VM_V8 "Server Side V8 Javascript engine" OFF)
+
+
+# Print the NVSERV FEATURES
+message(STATUS "NVSERV FEATURES.")
+message(STATUS "Core: ON")
+
+if(NVSERV_SERVER_REST)
+  message(STATUS "REST Server: ${NVSERV_SERVER_REST}")
 endif()
-option(NVREST_CXX_STANDARD_REQUIRED "CXX Required" ON)
-option(NVREST_CXX_EXTENSIONS "CXX Extensions" ON)
+
+if(NVSERV_SERVER_GRPC)
+  message(STATUS "GRPC Server: ${NVSERV_SERVER_GRPC}")
+endif()
+
+if(NVSERV_SERVER_SOCKET)
+  message(STATUS "SOCKET Server: ${NVSERV_SERVER_SOCKET}")
+endif()
+
+if(NVSERV_FEATURE_POSTGRES)
+  message(STATUS "Postgres support: ${NVSERV_FEATURE_POSTGRES}")
+endif()
+
+if(NVSERV_FEATURE_API_CLIENT)
+  message(STATUS "HTTP & API Client support: ${NVSERV_FEATURE_API_CLIENT}")
+endif()
+
+
+message(STATUS "")
+
+message(STATUS "NvServ LIB DIR:${CMAKE_CURRENT_SOURCE_DIR}")
+
+if(NOT NVSERV_CXX_VERSION)
+    set(NVSERV_CXX_VERSION 17)
+endif()
+option(NVSERV_CXX_STANDARD_REQUIRED "CXX Required" ON)
+option(NVSERV_CXX_EXTENSIONS "CXX Extensions" ON)
 
 include(ProjectCXX)
 set(ISROOT FALSE)
 NV_DETECT_IS_ROOT_PROJECT(ISROOT)
-message(STATUS "NvRest Root Project: ${ISROOT} ${NVREST_CXX_VERSION}")
+message(STATUS "NvServ Root Project: ${ISROOT} ${NVSERV_CXX_VERSION}")
 
-NV_PROPOGATE_CXX_OPTIONS(${NVREST_CXX_VERSION} ${NVREST_CXX_STANDARD_REQUIRED} ${NVREST_CXX_EXTENSIONS})
+NV_PROPOGATE_CXX_OPTIONS(${NVSERV_CXX_VERSION} ${NVSERV_CXX_STANDARD_REQUIRED} ${NVSERV_CXX_EXTENSIONS})
 
 set(CXX_FEATURE "")
-NV_GET_CXX_STD_FEATURE(${NVREST_CXX_VERSION} CXX_FEATURE)
+NV_GET_CXX_STD_FEATURE(${NVSERV_CXX_VERSION} CXX_FEATURE)
 message(STATUS "CXX Feature: ${CXX_FEATURE}")
 
 set(ABSL_PROPAGATE_CXX_STD ON)
 
-option(NV_REST_BUILD_DOC "Build documentation" OFF)
-option(NV_REST_SANITIZE_ADDRESS "SANITIZE ADDRESS" ON)
-option(NV_REST_USE_CATCH ON)
-option(NV_REST_USE_LIB ON)
-option(NV_REST_USE_TEST ON)
-option(NV_REST_BUILD_EXAMPLE ON)
+option(NVSERV_BUILD_DOC "Build documentation" OFF)
+option(NVSERV_SANITIZE_ADDRESS "SANITIZE ADDRESS" ON)
+option(NVSERV_USE_CATCH ON)
+option(NVSERV_USE_LIB ON)
+option(NVSERV_USE_TEST ON)
+option(NVSERV_BUILD_EXAMPLE ON)
 
 
-set(NV_REST_BUILD_DOC OFF)
-set(NV_REST_SANITIZE_ADDRESS ON)
-set(NV_REST_USE_CATCH ON)
-set(NV_REST_USE_LIB ON)
-set(NV_REST_USE_TEST OFF)
-set(NV_REST_BUILD_EXAMPLE ON)
+set(NVSERV_BUILD_DOC OFF)
+set(NVSERV_SANITIZE_ADDRESS ON)
+set(NVSERV_USE_CATCH ON)
+set(NVSERV_USE_LIB ON)
+set(NVSERV_USE_TEST OFF)
+set(NVSERV_BUILD_EXAMPLE ON)
 
 
 # Add ASAN
-if(NV_REST_SANITIZE_ADDRESS)
+if(NVSERV_SANITIZE_ADDRESS)
     set(SANITIZE_ADDRESS ON)
-endif(NV_REST_SANITIZE_ADDRESS)
+endif(NVSERV_SANITIZE_ADDRESS)
 
 #  make ourself sanitize and sane well.
 if(NOT Sanitizers_FOUND)
@@ -52,7 +106,7 @@ if(NOT Sanitizers_FOUND)
 endif()
 
 # Add Doxygen
-if(NV_REST_BUILD_DOC)
+if(NVSERV_BUILD_DOC)
     if(NOT DOXYGEN_FOUND)
         find_package(Doxygen)
     endif()
@@ -67,7 +121,7 @@ if(NV_REST_BUILD_DOC)
         message("Doxygen build started")
 
          # note the option ALL which allows to build the docs together with the application
-        add_custom_target( doc_nvrest ALL
+        add_custom_target( doc_nvserv ALL
             COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/generated/docs-cached/
             COMMENT "Generating API documentation with Doxygen"
@@ -75,23 +129,14 @@ if(NV_REST_BUILD_DOC)
     else (DOXYGEN_FOUND)
         message("Doxygen need to be installed to generate the doxygen documentation")
     endif (DOXYGEN_FOUND)
-endif(NV_REST_BUILD_DOC)
+endif(NVSERV_BUILD_DOC)
 
 # Add Unit Test Lib Catch2
-if(NV_REST_USE_CATCH)
+if(NVSERV_USE_CATCH)
  message(STATUS  "CATCH2::ADD_LIB.")
  find_package(Catch2 3 REQUIRED)
 endif()
 
-
-# Add dependencies source code
-
-# Include custom FindH2O module
-find_package(Wslay REQUIRED)
-if(NOT WSLAY_FOUND)
-    message(FATAL_ERROR "wslay library not found")
-endif()
-find_package(H2O REQUIRED)
 
 
 if (NOT nvcore_FOUND)
@@ -102,51 +147,36 @@ endif()
 #     add_subdirectory(deps/nvapi build-nvapi)
 # endif()
 
+#nvserv-core
+add_subdirectory(src/core/ build-nvserv_core)
 
-# Main headers and sources
-file(GLOB_RECURSE SOURCES_NV_REST CONFIGURE_DEPENDS
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/*.s
-)
-
-
-add_library(${PROJECT_NAME} STATIC ${SOURCES_NV_REST} )
-target_link_libraries(${PROJECT_NAME}  
-    nvcore 
-    ${H2O_LIBRARIES}
-    )
-set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
-target_compile_features(${PROJECT_NAME} PUBLIC ${CXX_FEATURE})
-target_include_directories(${PROJECT_NAME}
-    PUBLIC
-        src/
-        ${H2O_INCLUDE_DIRS}
-)
-
-
-add_executable(${PROJECT_NAME}-test main.cc)
-if(Sanitizers_FOUND)
-    add_sanitizers("${PROJECT_NAME}-test")
-    message(STATUS "${PROJECT_NAME}-test_LIB::ASAN:ON.")
+# nvserv::rest
+if(NVSERV_SERVER_REST)
+  add_subdirectory(src/rest/ build-nvserv_rest)
+  
 endif()
 
-target_link_libraries(${PROJECT_NAME}-test PRIVATE ${PROJECT_NAME} )
-target_compile_features(${PROJECT_NAME}-test PUBLIC ${CXX_FEATURE})
-target_include_directories("${PROJECT_NAME}-test"
-    PUBLIC
-        src/
-)
+# nvserv::rest
+if(NVSERV_FEATURE_POSTGRES)
+  add_subdirectory(src/postgres/ build-nvserv_postgres)
+  
+endif()
 
-if(NV_REST_USE_TEST)
+
+# nvserv-server
+# final server combine all needed linking
+add_subdirectory(src/server/ build-nvserv_server)
+
+
+if(NVSERV_USE_TEST)
     message(STATUS "TEST::ADD_UNIT_TEST.")
-    add_subdirectory(tests/nvrest)
+    add_subdirectory(tests/nvserv)
 endif()       
 
-message(STATUS "NvREST LIB Configuration Done!\n")
-set(nvrest_FOUND  ON)
+message(STATUS "NvServ LIB Configuration Done!\n")
+set(nvserv_FOUND  ON)
 
-if(NV_REST_BUILD_EXAMPLE)
+if(NVSERV_BUILD_EXAMPLE)
     add_subdirectory(examples/hello-world build-examples-hello-world)
 endif()
 

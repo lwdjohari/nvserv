@@ -2,7 +2,7 @@
 
 #include "nvm/io/byte_stream.h"
 #include "nvm/nvm_core.h"
-#include "nvrest/server/server.h"
+#include "nvserv/server/server.h"
 using namespace nvm;
 void Test() {
   std::fstream s;
@@ -23,7 +23,7 @@ void Test() {
 };
 
 int main() {
-  auto wc = ::nvrest::server::WorkerConfig("fs",::nvrest::server::WorkerType::IoWorker,2);
+  auto wc = ::nvserv::server::WorkerConfig("fs",::nvserv::server::WorkerType::IoWorker,2);
   
   uint8_t arr_u8[] = {0, 1, 2, 3};
   char arr_ch[] = {0, 1, 2, 3};

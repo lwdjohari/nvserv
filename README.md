@@ -7,7 +7,7 @@ Lightweight Rest API Framework for C++14 &amp; C++17
 
 # Development & Dependencies
 
-NvRest use h2o proven http1.1/http2 webserver as the underlying http server.
+NvServ use h2o proven http1.1/http2 webserver as the underlying http server.
 
 ## Development
 - CMake 3.10
@@ -46,7 +46,7 @@ dpkg -L libwslay-dev
 ### Troubleshooting
 
 Somehow in ubuntu, libwslay can't be found by original cmake find_package.<br/>
-NvRest work around is adding custom FindWslay.cmake module in ```cmake``` folder
+NvServ work around is adding custom FindWslay.cmake module in ```cmake``` folder
 
 ```cmake
 find_package(Wslay REQUIRED)

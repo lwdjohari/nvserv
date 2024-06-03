@@ -1,27 +1,27 @@
 cmake_minimum_required(VERSION 3.10)
-project(nvrest_hello_world CXX)
+project(nvserv_hello_world CXX)
 
-message(STATUS "NvREST - Hello World Example")
+message(STATUS "NvServ - Hello World Example")
 message(STATUS "-----------------------------")
 
-if(NOT DEFINED NVREST_CXX_VERSION)
-    set(NVREST_CXX_VERSION 17)
+if(NOT DEFINED NVSERV_CXX_VERSION)
+    set(NVSERV_CXX_VERSION 17)
 endif()
-if(NOT DEFINED NVREST_CXX_STANDARD_REQUIRED)
-    set(NVREST_CXX_STANDARD_REQUIRED ON)
+if(NOT DEFINED NVSERV_CXX_STANDARD_REQUIRED)
+    set(NVSERV_CXX_STANDARD_REQUIRED ON)
 endif()
-if(NOT DEFINED NVREST_CXX_EXTENSIONS)
-    set(NVREST_CXX_EXTENSIONS OFF)
+if(NOT DEFINED NVSERV_CXX_EXTENSIONS)
+    set(NVSERV_CXX_EXTENSIONS OFF)
 endif()
 
 include(ProjectCXX)
 set(ISROOT FALSE)
 NV_DETECT_IS_ROOT_PROJECT(ISROOT)
-message(STATUS "NvRest Example Hello-world: ${ISROOT} ${NVREST_CXX_VERSION}")
+message(STATUS "NvRest Example Hello-world: ${ISROOT} ${NVSERV_CXX_VERSION}")
 
-NV_PROPOGATE_CXX_OPTIONS(${NVREST_CXX_VERSION} ${NVREST_CXX_STANDARD_REQUIRED} ${NVREST_CXX_EXTENSIONS})
+NV_PROPOGATE_CXX_OPTIONS(${NVSERV_CXX_VERSION} ${NVSERV_CXX_STANDARD_REQUIRED} ${NVSERV_CXX_EXTENSIONS})
 set(CXX_FEATURE "")
-NV_GET_CXX_STD_FEATURE(${NVREST_CXX_VERSION} CXX_FEATURE)
+NV_GET_CXX_STD_FEATURE(${NVSERV_CXX_VERSION} CXX_FEATURE)
 message(STATUS "CXX Feature: ${CXX_FEATURE}")
 
 # Main headers and sources
@@ -34,9 +34,10 @@ file(GLOB_RECURSE NV_REST_EXAM1 CONFIGURE_DEPENDS
 
 add_executable(${PROJECT_NAME} ${NV_REST_EXAM1})
 target_link_libraries(${PROJECT_NAME}  
-    nvcore 
-    nvrest
-    ${H2O_LIBRARIES}
+    nvserv::core
+    nvserv::rest
+    nvserv::postgres
+    nvserv::server
     )
 set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
 target_compile_features(${PROJECT_NAME} PUBLIC ${CXX_FEATURE})
@@ -44,7 +45,6 @@ target_compile_features(${PROJECT_NAME} PUBLIC ${CXX_FEATURE})
 target_include_directories(${PROJECT_NAME}
     PUBLIC
         src/
-        ${H2O_INCLUDE_DIRS}
 )
 
 
