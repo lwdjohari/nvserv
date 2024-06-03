@@ -34,17 +34,18 @@ file(GLOB_RECURSE NV_REST_EXAM1 CONFIGURE_DEPENDS
 
 add_executable(${PROJECT_NAME} ${NV_REST_EXAM1})
 target_link_libraries(${PROJECT_NAME}  
-    nvserv::core
-    nvserv::rest
-    nvserv::postgres
-    nvserv::server
+    PUBLIC
+        nvserv::core
+        nvserv::rest
+        nvserv::postgres
+        nvserv::server
     )
 set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
 target_compile_features(${PROJECT_NAME} PUBLIC ${CXX_FEATURE})
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC
-        src/
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/
 )
 
 

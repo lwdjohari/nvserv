@@ -1,7 +1,7 @@
 #pragma once
 
 #include <nvserv/handlers/http_json_handler.h>
-// #include <nvserv/storages/postgres/pg_server.h>
+#include <nvserv/storages/postgres/pg_server.h>
 
 namespace helloworld {
 class HelloWorldHandler final : public nvserv::handlers::HttpJsonHandlerBase {
@@ -14,7 +14,7 @@ class HelloWorldHandler final : public nvserv::handlers::HttpJsonHandlerBase {
       const nvserv::http::HttpRequestContext& context,
       const nvserv::http::HttpRequest& request,
       nvserv::formats::json::Value& json) const override {
-        // nvserv::storages::postgres::PgServer pgserver;
+      nvserv::storages::postgres::PgServer pgserver;
     return nvserv::formats::json::Value();
   }
 };
