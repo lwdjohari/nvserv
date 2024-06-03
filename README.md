@@ -49,7 +49,7 @@ target_link_libraries(${PROJECT_NAME}
 | 6| NVSERV_FEATURE_ORACLE | nvserv::oracle | WIP | Datalayer for oracle database (transport binary protocol impl). |
 | 7| NVSERV_FEATURE_MYSQL | nvserv::mysql | PLAN | Datalayer for MYSQL compatible database. |
 | 8| NVSERV_FEATURE_SQLITE | nvserv::sqlite | PLAN | Datalayer for SQLITE database. |
-| 9| NVSERV_FEATURE_REDIS | nvserv::redis | PLAN | TCP/UDP Server development. |
+| 9| NVSERV_FEATURE_REDIS | nvserv::redis | PLAN | Redis integration. |
 |10| NVSERV_FEATURE_S3 | nvserv::s3 | PLAN | S3 Integrations. |
 |11| NVSERV_FEATURE_ENVOY | nvserv::envoy | WIP | Envoy dataplane integration. |
 |12| NVSERV_FEATURE_API_CLIENT | nvserv::apiclient | WIP | HTTP Client for consuming web page or REST API. |
