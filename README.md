@@ -38,7 +38,7 @@ target_link_libraries(${PROJECT_NAME}
     )
 ```
 
-## Complete NvServ CMake Options
+## NvServ CMake Features & Options
 |#|FEATURES| LIBRARY | STATUS |DESCRIPTION|
 |--|-------|-----|----|----------|
 | 1| - | nvserv::core | WIP | NvServ Core |
@@ -55,11 +55,11 @@ target_link_libraries(${PROJECT_NAME}
 |12| NVSERV_FEATURE_API_CLIENT | nvserv::apiclient | WIP | HTTP Client for consuming web page or REST API. |
 |13| NVSERV_FEATURE_GRPC_CLIENT | nvserv::grpcclient | PLAN | GRPC Client for grpc services. |
 |14| NVSERV_FEATURE_MQTT_CLIENT | nvserv::mqttclient | PLAN | MQTT Client for connecting to MQTT Broker. |
-|15| NVSERV_FEATURE_VM_V8 | nvserv::vm_v8 | PLAN | V8 Engine integration for server side HTML or JS executions |
 
 ## NvServ Library Options
 NvServ has options to choose engine for certain library, currently the options are available for
-
+- Json: if not specified will use nlohman-json as default
+  
 |#|FEATURES| ENGINE OPTIONS | LIBRARY | DESCRIPTION |
 |--|--------|----------------|---------|------------|
 | 1| NVSERV_SERVER_REST | NVSERV_JSON_USE_RAPIDJSON | rapidjson | NvServ will use rapidjson as backend engine for json serializer and deserializer. |
