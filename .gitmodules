@@ -4,3 +4,6 @@
 [submodule "deps/nvapi"]
 	path = deps/nvapi
 	url = https://github.com/lwdjohari/nvapi.git
+[submodule "deps/rapidsjson"]
+	path = deps/rapidsjson
+	url = https://github.com/Tencent/rapidjson.git
