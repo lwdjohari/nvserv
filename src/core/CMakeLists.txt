@@ -19,7 +19,12 @@ set_target_properties(${PROJECT_NAME}_core PROPERTIES LINKER_LANGUAGE CXX)
 target_compile_features(${PROJECT_NAME}_core PUBLIC ${CXX_FEATURE})
 target_include_directories(${PROJECT_NAME}_core
     PUBLIC
-        src/
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/
 )
 
 add_library(${PROJECT_NAME}::core ALIAS ${PROJECT_NAME}_core )
+
+message(STATUS "Unit-Test nvserv::core: ${NVSERV_USE_TEST}")
+if(NVSERV_USE_TEST)
+    add_subdirectory(tests)
+endif()  

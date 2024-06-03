@@ -25,7 +25,7 @@ set_target_properties(${PROJECT_NAME}_postgres PROPERTIES LINKER_LANGUAGE CXX)
 target_compile_features(${PROJECT_NAME}_postgres PUBLIC ${CXX_FEATURE})
 target_include_directories(${PROJECT_NAME}_postgres
     PUBLIC
-        src/
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/
     PRIVATE
         ${PQXX_INCLUDE_DIRS}
 )

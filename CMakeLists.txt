@@ -82,18 +82,13 @@ set(ABSL_PROPAGATE_CXX_STD ON)
 option(NVSERV_BUILD_DOC "Build documentation" OFF)
 option(NVSERV_SANITIZE_ADDRESS "SANITIZE ADDRESS" ON)
 option(NVSERV_USE_CATCH ON)
-option(NVSERV_USE_LIB ON)
 option(NVSERV_USE_TEST ON)
 option(NVSERV_BUILD_EXAMPLE ON)
 
-
-set(NVSERV_BUILD_DOC OFF)
-set(NVSERV_SANITIZE_ADDRESS ON)
-set(NVSERV_USE_CATCH ON)
-set(NVSERV_USE_LIB ON)
-set(NVSERV_USE_TEST OFF)
-set(NVSERV_BUILD_EXAMPLE ON)
-
+if(ISROOT)
+  set(NVSERV_USE_CATCH ON)
+  set(NVSERV_USE_TEST ON)
+endif()
 
 # Add ASAN
 if(NVSERV_SANITIZE_ADDRESS)
@@ -168,10 +163,10 @@ endif()
 add_subdirectory(src/server/ build-nvserv_server)
 
 
-if(NVSERV_USE_TEST)
-    message(STATUS "TEST::ADD_UNIT_TEST.")
-    add_subdirectory(tests/nvserv)
-endif()       
+# if(NVSERV_USE_TEST)
+#     message(STATUS "TEST::ADD_UNIT_TEST.")
+#     add_subdirectory(tests/nvserv)
+# endif()       
 
 message(STATUS "NvServ LIB Configuration Done!\n")
 set(nvserv_FOUND  ON)

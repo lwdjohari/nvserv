@@ -30,7 +30,7 @@ set_target_properties(${PROJECT_NAME}_rest PROPERTIES LINKER_LANGUAGE CXX)
 target_compile_features(${PROJECT_NAME}_rest PUBLIC ${CXX_FEATURE})
 target_include_directories(${PROJECT_NAME}_rest
     PUBLIC
-        src/
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/
     PRIVATE
         ${H2O_INCLUDE_DIRS}
 )

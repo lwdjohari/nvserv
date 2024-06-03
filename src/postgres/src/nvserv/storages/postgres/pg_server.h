@@ -1,7 +1,6 @@
 #pragma once
 
 #include "nvserv/storages/postgres/declare.h"
-
 NVREST_BEGIN_NAMESPACE(storages::postgres)
 
 class PgServer{

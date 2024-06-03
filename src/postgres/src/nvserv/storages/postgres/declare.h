@@ -1,6 +1,6 @@
 #pragma once
 #include <memory>
-#include "nvserv/core/global_macro.h"
+#include "nvserv/global_macro.h"
 
 NVREST_BEGIN_NAMESPACE(storages::postgres)
 
