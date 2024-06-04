@@ -88,6 +88,11 @@ option(NVSERV_BUILD_EXAMPLE ON)
 if(ISROOT)
   set(NVSERV_USE_CATCH ON)
   set(NVSERV_USE_TEST ON)
+  set(NVSERV_BUILD_EXAMPLE ON)
+  set(NVSERV_SERVER_GRPC ON)
+  set(NVSERV_SERVER_REST ON)
+  set(NVSERV_FEATURE_POSTGRES ON)
+
 endif()
 
 # Add ASAN
@@ -148,13 +153,39 @@ add_subdirectory(src/core/ build-nvserv_core)
 # nvserv::rest
 if(NVSERV_SERVER_REST)
   add_subdirectory(src/rest/ build-nvserv_rest)
-  
+endif()
+
+# nvserv::grpc
+if(NVSERV_SERVER_GRPC)
+find_package(Protobuf REQUIRED)
+find_package(gRPC CONFIG REQUIRED)
+
+# Print the found versions
+  if(Protobuf_FOUND)
+      message(STATUS "Found Protobuf version ${Protobuf_VERSION}")
+  else()
+      message(FATAL_ERROR "Protobuf not found")
+  endif()
+
+  if(gRPC_FOUND)
+      message(STATUS "Found gRPC version ${gRPC_VERSION}")
+  else()
+      message(FATAL_ERROR "gRPC not found")
+  endif()
+
+  SET(GRPC_LIBRARIES)
+  LIST(APPEND GRPC_LIBRARIES 
+    protobuf::libprotobuf
+    gRPC::grpc
+    gRPC::grpc++
+    gRPC::grpc++_unsecure)
+
+  add_subdirectory(src/grpcl/ build-nvserv_grpcl)
 endif()
 
 # nvserv::rest
 if(NVSERV_FEATURE_POSTGRES)
   add_subdirectory(src/postgres/ build-nvserv_postgres)
-  
 endif()
 
 
@@ -173,6 +204,7 @@ set(nvserv_FOUND  ON)
 
 if(NVSERV_BUILD_EXAMPLE)
     add_subdirectory(examples/hello-world build-examples-hello-world)
+    add_subdirectory(examples/hello-world-grpc build-examples-hello-world-grpc)
 endif()
 
 message(STATUS "")

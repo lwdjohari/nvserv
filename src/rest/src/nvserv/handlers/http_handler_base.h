@@ -15,8 +15,9 @@ class HttpHandlerBase : public components::ComponentBase {
  public:
   HttpHandlerBase(const components::ComponentLocator& locator,
                   const components::ComponentConfig& config,
+                  components::ComponentType type,
                   bool is_monitor = false)
-                  : ComponentBase(locator, config, is_monitor){};
+                  : ComponentBase(locator, config,type,is_monitor){};
   ~HttpHandlerBase(){};
 
  protected:

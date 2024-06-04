@@ -3,6 +3,11 @@
 // cppcheck-suppress unknownMacro
 NVREST_BEGIN_NAMESPACE(components)
 
-ComponentList::ComponentList() {}
+ComponentBase::ComponentBase(const components::ComponentLocator& locator,
+                             const components::ComponentConfig& config,
+                             ComponentType type, bool is_monitor)
+                : component_type_(type){}
+
+
 
 NVREST_END_NAMESPACE

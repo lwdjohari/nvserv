@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package orderservice;
+
+message Product {
+    string name = 1;
+    int32 quantity = 2;
+    double price = 3;
+}
+
+message Coupon {
+    string code = 1;
+    double discount = 2;
+}
+
+message OrderRequest {
+    repeated Product products = 1;
+    Coupon coupon = 2;
+}
+
+message OrderResult {
+    double total = 1;
+    double discount = 2;
+    double final_total = 3;
+}
+
+message Void {}
+
+service OrderService {
+    rpc Order (OrderRequest) returns (OrderResult);
+    rpc VoidMethod (Void) returns (Void);
+}

@@ -49,6 +49,13 @@ void Router::AddRoute(const std::string& path, Route::HandlerFn handler) {
   node->handler = std::move(handler);
 }
 
+void Router::PrintRouterTree() const {
+    std::cout << "Router Tree\n" << std::endl;
+    std::cout << "Route Root:";
+
+    root_->PrintNode("");
+  }
+
 Route::HandlerFn Router::MatchRoute(
     const std::string& path,
     std::unordered_map<std::string, std::string>& params) const {

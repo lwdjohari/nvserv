@@ -28,6 +28,7 @@ class Router {
   Router(Router&&) = delete;
   Router& operator=(Router&&) = delete;
 
+  void PrintRouterTree() const;
   void AddRoute(const std::string& path, Route::HandlerFn handler);
 
   Route::HandlerFn MatchRoute(

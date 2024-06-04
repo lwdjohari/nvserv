@@ -1,8 +1,8 @@
 #pragma once
 
-#include "nvserv/global_macro.h"
 #include "nvserv/formats/json/value.h"
 #include "nvserv/formats/json/value_builder.h"
+#include "nvserv/global_macro.h"
 #include "nvserv/handlers/http_handler_base.h"
 
 NVREST_BEGIN_NAMESPACE(handlers)
@@ -12,7 +12,8 @@ class HttpJsonHandlerBase : public HttpHandlerBase {
   HttpJsonHandlerBase(const components::ComponentLocator& locator,
                       const components::ComponentConfig& config,
                       bool is_monitor = false)
-                  : HttpHandlerBase(locator, config, is_monitor) {}
+                  : HttpHandlerBase(locator, config, 
+                                    components::ComponentType::kHandlerJson,is_monitor) {}
 
   virtual formats::json::Value HandleJsonRequest(
       const http::HttpRequestContext& context, const http::HttpRequest& request,
@@ -20,7 +21,9 @@ class HttpJsonHandlerBase : public HttpHandlerBase {
 
  protected:
   void ParseRequestData(const http::HttpRequestContext& context,
-                        http::HttpRequest& request) const override;
+                        http::HttpRequest& request) const override{
+                            
+                        };
 
  private:
 };

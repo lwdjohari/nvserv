@@ -7,7 +7,9 @@
 // cppcheck-suppress unknownMacro
 NVREST_BEGIN_NAMESPACE(components)
 
-namespace details {
+using ComponentBasePtr = std::shared_ptr<ComponentBase>;
+
+namespace impl {
 #if __NR_CPP17
 template <class T>
 auto GetComponentName() -> decltype(std::string_view{T::ComponentName}) {
@@ -20,103 +22,59 @@ auto GetComponentName() -> decltype(std::string{T::ComponentName}) {
 };
 #endif
 
-class ComponentHolderBase {
+
+
+}  // namespace impl
+
+
+class ComponentHolder  {
  public:
-  ComponentHolderBase() = delete;
-  ComponentHolderBase(const ComponentHolderBase&) = delete;
-  ComponentHolderBase(ComponentHolderBase&&) = delete;
-  ComponentHolderBase& operator=(const ComponentHolderBase&) = delete;
-  ComponentHolderBase& operator=(ComponentHolderBase&&) = delete;
+  explicit ComponentHolder(
+      ComponentBase&& component, bool is_auth = false,
+      const std::string& config_section_name = std::string())
+                  : components_(std::make_shared<ComponentBase>(
+                        std::forward<ComponentBase>(component))),
+                    config_section_name_(config_section_name),
+                    is_auth_(false) {}
+
+  ComponentHolder() = delete;
+  ComponentHolder(const ComponentHolder&) = delete;
+  ComponentHolder(ComponentHolder&&) = delete;
+  ComponentHolder& operator=(const ComponentHolder&) = delete;
+  ComponentHolder& operator=(ComponentHolder&&) = delete;
+
+  ComponentBasePtr Component() const {
+    return components_;
+  }
+
+  const std::string& ConfigSection() const{
+    return config_section_name_;
+  }
+
+  bool IsAuth() const{
+    return is_auth_;
+  }
+
+ private:
+  ComponentBasePtr components_;
+  std::string config_section_name_;
+  bool is_auth_;
 };
-}  // namespace details
 
 class ComponentBase {
  private:
  public:
   explicit ComponentBase(const components::ComponentLocator& locator,
                          const components::ComponentConfig& config,
-                         bool is_monitor = false);
-  ~ComponentBase();
+                         ComponentType type, bool is_monitor = false);
+  virtual ~ComponentBase(){};
+
+  const ComponentType& Type() const {
+    return component_type_;
+  }
 
  protected:
+  ComponentType component_type_;
 };
-
-class ComponentList final {
- public:
-  ComponentList();
-
-  template <typename TComponent>
-  ComponentList& RegisterComponent() &;
-
-  template <typename TComponent>
-  ComponentList& RegisterHttpHandler(bool auth = false) &;
-
-  template <typename TComponent>
-  ComponentList& RegisterHttpHandler(const std::string& endpoint,
-                                     bool auth = false) &;
-
-  template <typename TComponent>
-  ComponentList& RegisterGrpcHandler(bool auth = false) &;
-
-  template <typename TComponent>
-  ComponentList& RegisterGrpcHandler(const std::string& endpoint,
-                                     bool auth = false) &;
-
-  template <typename TComponent>
-  ComponentList& RegisterTcpHandler() &;
-
-  template <typename TComponent>
-  ComponentList& RegisterUdpHandler() &;
-
-  template <typename TComponent>
-  ComponentList& RegisterComponent(const std::string& config_name,
-                                   bool auth = false) &;
-
-  ComponentList& SetupServer(ServerType type) {
-    return *this;
-  };
-
-  ComponentList& SetupServer(ServerType type, uint32_t port) {
-    return *this;
-  };
-
-  ComponentList& SetupServer(ServerType type, const std::string& host,
-                             uint32_t port) {
-    return *this;
-  };
-};
-
-template <typename TComponent>
-ComponentList& ComponentList::RegisterComponent() & {
-  return *this;
-};
-
-template <typename TComponent>
-ComponentList& ComponentList::RegisterHttpHandler(bool auth) & {
-  return *this;
-};
-
-template <typename TComponent>
-ComponentList& ComponentList::RegisterHttpHandler(const std::string& endpoint,
-                                                  bool auth) & {
-  return *this;
-};
-
-template <typename TComponent>
-ComponentList& ComponentList::RegisterGrpcHandler(bool auth) & {
-  return *this;
-};
-
-template <typename TComponent>
-ComponentList& ComponentList::RegisterGrpcHandler(const std::string& endpoint,
-                                                  bool auth) & {
-  return *this;
-};
-
-template <typename TComponent>
-ComponentList& ComponentList::RegisterComponent(const std::string& config_name,
-                                                bool auth) & {
-  return *this;
-}
 
 NVREST_END_NAMESPACE
