@@ -2,26 +2,34 @@
 
 // #include "nvserv/handlers/grpc_service_handler.h"
 #include "nvserv/grpcl/grpcl.h"
-#include "order_service.pb.h"
 #include "order_service.grpc.pb.h"
+#include "order_service.pb.h"
 namespace helloworld {
-    
-class OrderServiceHandler : public  orderservice::OrderService::Service {
+
+class OrderServiceHandler : public orderservice::OrderService::Service {
  public:
   // Use the macro to define gRPC methods
-  NV_GRPC_DEFINE_METHOD(OrderServiceHandler, Order, orderservice::OrderRequest, orderservice::OrderResult)
-  NV_GRPC_DEFINE_METHOD(OrderServiceHandler, VoidMethod, orderservice::Void, orderservice::Void)
+  grpc::Status Order(grpc::ServerContext* context,
+                     const orderservice::OrderRequest* request,
+                     orderservice::OrderResult* response) override {
+    return this
+        ->HandleRequest<orderservice::OrderRequest, orderservice::OrderResult>(
+            context, request, response, &OrderServiceHandler::HandleOrder);
+  }
+  NV_GRPC_DEFINE_METHOD(OrderServiceHandler, VoidMethod, orderservice::Void,
+                        orderservice::Void)
 
  private:
   template <typename Req, typename Res, typename Func>
-  grpc::Status HandleRequest(grpc::ServerContext* context,
-                             const Req* request, Res* response, Func func) const {
+  grpc::Status HandleRequest(grpc::ServerContext* context, const Req* request,
+                             Res* response, Func func) const {
     Res resp = (this->*func)(*request);
     *response = resp;
     return grpc::Status::OK;
   }
 
-  orderservice::OrderResult HandleOrder(const orderservice::OrderRequest& order_request) const {
+  orderservice::OrderResult HandleOrder(
+      const orderservice::OrderRequest& order_request) const {
     double total = 0.0;
     double discount = order_request.coupon().discount();
 
