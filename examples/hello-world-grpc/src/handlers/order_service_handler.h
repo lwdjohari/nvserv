@@ -1,32 +1,23 @@
 #pragma once
 
-// #include "nvserv/handlers/grpc_service_handler.h"
-#include "nvserv/grpcl/grpcl.h"
+#include <nvserv/grpcl/grpcl.h>
+
 #include "order_service.grpc.pb.h"
 #include "order_service.pb.h"
-namespace helloworld {
+
+namespace hello_world {
 
 class OrderServiceHandler : public orderservice::OrderService::Service {
  public:
   // Use the macro to define gRPC methods
-  grpc::Status Order(grpc::ServerContext* context,
-                     const orderservice::OrderRequest* request,
-                     orderservice::OrderResult* response) override {
-    return this
-        ->HandleRequest<orderservice::OrderRequest, orderservice::OrderResult>(
-            context, request, response, &OrderServiceHandler::HandleOrder);
-  }
+  NV_GRPC_DEFINE_METHOD(OrderServiceHandler, Order, orderservice::OrderRequest,
+                        orderservice::OrderResult)
   NV_GRPC_DEFINE_METHOD(OrderServiceHandler, VoidMethod, orderservice::Void,
                         orderservice::Void)
 
  private:
-  template <typename Req, typename Res, typename Func>
-  grpc::Status HandleRequest(grpc::ServerContext* context, const Req* request,
-                             Res* response, Func func) const {
-    Res resp = (this->*func)(*request);
-    *response = resp;
-    return grpc::Status::OK;
-  }
+  // cppcheck-suppress unknownMacro
+  NV_GRPC_HANDLE_REQUEST_TEMPLATE()
 
   orderservice::OrderResult HandleOrder(
       const orderservice::OrderRequest& order_request) const {

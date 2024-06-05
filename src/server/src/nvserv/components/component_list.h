@@ -41,10 +41,10 @@ class ComponentList final {
 
 #if NVSERV_SERVER_GRPC == 1
   template <typename TComponent>
-  ComponentList& RegisterGrpcHandler(bool auth = false);
+  ComponentList& RegisterGrpcServiceHandler(bool auth = false);
 
   template <typename TComponent>
-  ComponentList& RegisterGrpcHandler(const std::string& endpoint,
+  ComponentList& RegisterGrpcServiceHandler(const std::string& endpoint,
                                      bool auth = false);
 
 #endif
@@ -96,12 +96,12 @@ ComponentList& ComponentList::RegisterHttpHandler(const std::string& endpoint,
 #if NVSERV_SERVER_GRPC == 1
 
 template <typename TComponent>
-ComponentList& ComponentList::RegisterGrpcHandler(bool auth) {
+ComponentList& ComponentList::RegisterGrpcServiceHandler(bool auth) {
   return *this;
 }
 
 template <typename TComponent>
-ComponentList& ComponentList::RegisterGrpcHandler(const std::string& endpoint,
+ComponentList& ComponentList::RegisterGrpcServiceHandler(const std::string& endpoint,
                                                   bool auth) {
   return *this;
 }
