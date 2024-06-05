@@ -30,6 +30,21 @@ option(NVSERV_FEATURE_RABBITMQ_CLIENT "RABBIT MQ Client for connecting RABBIT MQ
 # VM
 option(NVSERV_FEATURE_VM_V8 "Server Side V8 Javascript engine" OFF)
 
+# LIBS
+# Somehow when yout GRPC need specific ABSL Version
+# You can override to set this to OFF and add your ABSL version
+option(NVSERV_LIBS_ABSL_USE_BUNDLE "Use Abseil that is bundled with NvServ" ON)
+
+# AVAILABLE ABSL 
+# 202301251
+# 202401161
+if(NOT NVSERV_LIBS_ABSL_VERSION)
+  set(NVSERV_LIBS_ABSL_VERSION 202301251)
+endif()
+
+if(NOT DEFINED NVSERV_LIBS_ABSL_USE_BUNDLE)
+  set(NVSERV_LIBS_ABSL_USE_BUNDLE ON)
+endif()
 
 # Print the NVSERV FEATURES
 message(STATUS "NVSERV FEATURES.")
@@ -137,6 +152,20 @@ if(NVSERV_USE_CATCH)
  find_package(Catch2 3 REQUIRED)
 endif()
 
+find_package(Threads REQUIRED)
+
+# Google Abseil
+if(NVSERV_LIBS_ABSL_VERSION EQUAL 202301251  AND NVSERV_LIBS_ABSL_USE_BUNDLE)
+  message(STATUS "Use Abseil Libs: ${NVSERV_LIBS_ABSL_VERSION}" )
+  add_subdirectory(deps/abseil-lts20230125.1 build-abseil)
+elseif(NVSERV_LIBS_ABSL_VERSION EQUAL 202401161 AND NVSERV_LIBS_ABSL_USE_BUNDLE)
+  message(STATUS "Use Abseil Libs: ${NVSERV_LIBS_ABSL_VERSION}" )
+  add_subdirectory(deps/abseil-lts20240116.1 build-abseil)
+elseif(NVSERV_LIBS_ABSL_USE_BUNDLE)
+  message(FATAL_ERROR "Not supported ABSEIL Version: ${NVSERV_LIBS_ABSL_VERSION}")
+else()
+  message("Use Abseil Libs: ABSEIL NOT USE FROM Bundle")
+endif()
 
 
 if (NOT nvcore_FOUND)
@@ -157,7 +186,7 @@ endif()
 
 # nvserv::grpc
 if(NVSERV_SERVER_GRPC)
-find_package(Protobuf REQUIRED)
+find_package(Protobuf CONFIG REQUIRED)
 find_package(gRPC CONFIG REQUIRED)
 
 # Print the found versions

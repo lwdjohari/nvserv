@@ -25,9 +25,8 @@ NV_GET_CXX_STD_FEATURE(${NVSERV_CXX_VERSION} CXX_FEATURE)
 message(STATUS "CXX Feature: ${CXX_FEATURE}")
 
 # Find Protobuf and gRPC packages
-find_package(Protobuf REQUIRED)
-find_package(gRPC REQUIRED)
-find_package(absl CONFIG REQUIRED)
+# find_package(Protobuf REQUIRED)
+# find_package(gRPC REQUIRED)
 
 # Ensure the gRPC plugin is found
 if(NOT gRPC_CPP_PLUGIN_EXECUTABLE)
@@ -102,11 +101,6 @@ target_link_libraries(${PROJECT_NAME}
         nvserv::postgres
         nvserv::server
         ${GRPC_LIBRARIES} 
-        absl::status
-        absl::str_format
-        absl::strings
-        absl::base
-        absl::time
 )
 set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
 target_compile_features(${PROJECT_NAME} PUBLIC ${CXX_FEATURE})
