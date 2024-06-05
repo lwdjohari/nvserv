@@ -83,6 +83,16 @@ class GrpcServiceHandler : public GrpcServiceHandlerBase {
   }
 };
 
+class GrpcComponentService {
+public:
+  GrpcComponentService() {}
+
+  template <typename TComponent>
+  TComponent GetComponent() const {
+    return TComponent();
+  }
+
+};
 // template <typename RequestType, typename ResponseType>
 // class GrpcServiceHandler : public GrpcServiceHandlerBase {
 //  public:

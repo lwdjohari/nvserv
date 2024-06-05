@@ -1,5 +1,7 @@
 #pragma once
 
+#include <nvserv/components/component_config.h>
+#include <nvserv/components/component_locator.h>
 #include <nvserv/grpcl/grpcl.h>
 
 #include "order_service.grpc.pb.h"
@@ -7,13 +9,42 @@
 
 namespace hello_world {
 
-class OrderServiceHandler : public orderservice::OrderService::Service {
+// class OrderServiceHandler
+//                 : public nvserv::handlers::GrpcServiceHandler<
+//                       orderservice::OrderRequest, orderservice::OrderResult>
+//                       {
+//  public:
+//   using nvserv::handlers::GrpcServiceHandler<
+//       orderservice::OrderRequest,
+//       orderservice::OrderResult>::GrpcServiceHandler;
+
+//  protected:
+//   orderservice::OrderResult HandleOrder(
+//       const orderservice::OrderRequest& request) const {
+//     return orderservice::OrderResult();
+//   }
+//};
+
+class OrderServiceImpl : public orderservice::OrderService::Service {
  public:
+  explicit OrderServiceImpl(const nvserv::components::ComponentLocator& locator,
+                        const nvserv::components::ComponentConfig& config) {}
+
   // Use the macro to define gRPC methods
-  NV_GRPC_DEFINE_METHOD(OrderServiceHandler, Order, orderservice::OrderRequest,
-                        orderservice::OrderResult)
-  NV_GRPC_DEFINE_METHOD(OrderServiceHandler, VoidMethod, orderservice::Void,
-                        orderservice::Void)
+  grpc::Status Order(grpc::ServerContext* context,
+                     const orderservice::OrderRequest* request,
+                     orderservice::OrderResult* response) override {
+    return this
+        ->HandleRequest<orderservice::OrderRequest, orderservice::OrderResult>(
+            context, request, response, &OrderServiceImpl::HandleOrder);
+  }
+
+  grpc::Status VoidMethod(grpc::ServerContext* context,
+                          const orderservice::Void* request,
+                          orderservice::Void* response) override {
+    return this->HandleRequest<orderservice::Void, orderservice::Void>(
+        context, request, response, &OrderServiceImpl::HandleVoidMethod);
+  }
 
  private:
   // cppcheck-suppress unknownMacro
@@ -44,4 +75,4 @@ class OrderServiceHandler : public orderservice::OrderService::Service {
     return orderservice::Void();
   }
 };
-}  // namespace helloworld
+}  // namespace hello_world

@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include <unordered_map>
+#include <absl/container/node_hash_map.h>
 
 #include "nvserv/components/component_base.h"
 #include "nvserv/components/component_config.h"
@@ -23,7 +24,7 @@ class ComponentList final {
  public:
   using ComponentHolderPtr = std::shared_ptr<ComponentHolder>;
   using ComponentHolderMap =
-      std::unordered_map<std::string, ComponentHolderPtr>;
+      absl::node_hash_map<std::string, ComponentHolderPtr>;
 
   ComponentList();
 

@@ -9,7 +9,7 @@ int main(int argc, char* argv[]) {
       nvserv::components::ComponentList()
           .SetupServer("hello-world-grpc", nvserv::ServerType::Grpc, 9669)
           .RegisterComponent<hello_world::UtilComponent>("util-component")
-          .RegisterGrpcServiceHandler<hello_world::OrderServiceHandler>();
+          .RegisterGrpcServiceHandler<hello_world::OrderServiceImpl >();
 
   return nvserv::server::RunServer(services, argc, argv);
 }
