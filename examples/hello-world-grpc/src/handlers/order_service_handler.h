@@ -3,32 +3,17 @@
 #include <nvserv/components/component_config.h>
 #include <nvserv/components/component_locator.h>
 #include <nvserv/grpcl/grpcl.h>
-
+#include <nvserv/storages/postgres/pg_server.h>
 #include "order_service.grpc.pb.h"
 #include "order_service.pb.h"
 
 namespace hello_world {
 
-// class OrderServiceHandler
-//                 : public nvserv::handlers::GrpcServiceHandler<
-//                       orderservice::OrderRequest, orderservice::OrderResult>
-//                       {
-//  public:
-//   using nvserv::handlers::GrpcServiceHandler<
-//       orderservice::OrderRequest,
-//       orderservice::OrderResult>::GrpcServiceHandler;
-
-//  protected:
-//   orderservice::OrderResult HandleOrder(
-//       const orderservice::OrderRequest& request) const {
-//     return orderservice::OrderResult();
-//   }
-//};
-
 class OrderServiceImpl : public orderservice::OrderService::Service {
  public:
   explicit OrderServiceImpl(const nvserv::components::ComponentLocator& locator,
-                        const nvserv::components::ComponentConfig& config) {}
+                            const nvserv::components::ComponentConfig& config) {
+  }
 
   // Use the macro to define gRPC methods
   grpc::Status Order(grpc::ServerContext* context,
@@ -47,8 +32,12 @@ class OrderServiceImpl : public orderservice::OrderService::Service {
   }
 
  private:
-  // cppcheck-suppress unknownMacro
-  NV_GRPC_HANDLE_REQUEST_TEMPLATE()
+  template <typename TReq, typename TRes, typename TFunc>
+  grpc::Status HandleRequest(grpc::ServerContext* context, const TReq* request,
+                             TRes* response, TFunc func) const {
+    *response = (this->*func)(*request);
+    return grpc::Status::OK;
+  }
 
   orderservice::OrderResult HandleOrder(
       const orderservice::OrderRequest& order_request) const {
