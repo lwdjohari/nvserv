@@ -1,5 +1,6 @@
 #pragma once
 
+#include <nvm/dates/datetime.h>
 #include <nvserv/handlers/http_json_handler.h>
 #include <nvserv/storages/postgres/pg_server.h>
 
@@ -15,9 +16,30 @@ class HelloWorldHandler final : public nvserv::handlers::HttpJsonHandlerBase {
       const nvserv::http::HttpRequest& request,
       nvserv::formats::json::Value& json) const override {
     auto tx = pg_->Begin();
-    std::string user_id;
-    tx->Execute("Select * from users where user_id = {1}", user_id);
+    int32_t status_param = 1;
+    auto result =
+        tx->Execute("select * from employee where status = $1", status_param);
+
+    if (!result->Empty()) {
+      for (auto row : *result) {
+        auto emp_id = row->As<int32_t>("emp_id");
+        auto emp_name = row->As<std::string>("emp_name");
+        auto dept_id = row->As<std::string>("dept_id");
+        auto sect_name = row->As<std::string>("sect_name");
+        auto status = row->As<int16_t>("status");
+        auto dob = row->AsDateTimeOffset<nvm::dates::DateTime>("dob");
+
+        std::cout << "[" << emp_id << "] " << emp_name << " (" << dept_id << ":"
+                  << sect_name << ", " << dob << ", " << status << ")"
+                  << std::endl;
+      }
+    }
+
+    // No need for manual tx.Rollback() or tx.Release
+    // When TransactionPtr out-of-scope
+    // automatically checking what need to do.
     tx->Rollback();
+
     return nvserv::formats::json::Value();
   }
 

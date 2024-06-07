@@ -14,6 +14,8 @@ class StorageServer;
 class Transaction;
 class ServerPool;
 class ClusterConfig;
+class ExecutionResult;
+class RowResult;
 
 namespace postgres{
     class PgServer;
@@ -23,10 +25,12 @@ using StorageServerPtr = std::shared_ptr<StorageServer>;
 using TransactionPtr = std::shared_ptr<Transaction>;
 using ServerPoolPtr = std::shared_ptr<ServerPool>;
 using ClusterConfigListType = std::vector<ClusterConfig>;
+using ExecutionResultPtr = std::shared_ptr<ExecutionResult>;
+using RowResultPtr = std::shared_ptr<RowResult>;
 
 /// @brief NvServ storage driver
 enum class StorageType {
-  Unknown = 0,   // Storage driver is uniniatilized
+  Unknown = 0,   // Storage driver is uninitialized
   Postgres = 1,  // Postgres Database Server
   Oracle = 2,    // Oracle Database Server
   Mysql = 3,     // Mysql is not yet supported

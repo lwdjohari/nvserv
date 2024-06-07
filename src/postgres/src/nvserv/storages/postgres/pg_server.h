@@ -28,7 +28,7 @@ class PgServer final : public StorageServer {
   }
 
   TransactionPtr Begin() override {
-    return __NR_RETURN_MOVE(std::make_shared<PgTransaction>());
+    return __NR_RETURN_MOVE(std::make_shared<PgTransaction>(this));
   }
 
   const ClusterConfigList& ClusterConfigs() const override {
