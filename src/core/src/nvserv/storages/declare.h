@@ -16,7 +16,7 @@ class ServerPool;
 class ClusterConfig;
 class ExecutionResult;
 class RowResult;
-
+class PreparedStatementManager;
 namespace postgres{
     class PgServer;
 }
@@ -27,6 +27,7 @@ using ServerPoolPtr = std::shared_ptr<ServerPool>;
 using ClusterConfigListType = std::vector<ClusterConfig>;
 using ExecutionResultPtr = std::shared_ptr<ExecutionResult>;
 using RowResultPtr = std::shared_ptr<RowResult>;
+using PreparedStatementManagerPtr = std::shared_ptr<PreparedStatementManager>;
 
 /// @brief NvServ storage driver
 enum class StorageType {
