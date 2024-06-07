@@ -35,6 +35,7 @@ target_link_libraries(${PROJECT_NAME}
     nvserv::rest
     nvserv::postgres
     nvserv::apiclient
+    nvserv::server
     )
 ```
 
