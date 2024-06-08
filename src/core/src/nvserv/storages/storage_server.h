@@ -7,6 +7,8 @@
 #include "nvserv/global_macro.h"
 #include "nvserv/storages/cluster_config.h"
 #include "nvserv/storages/declare.h"
+#include "nvserv/storages/connection_pool.h"
+
 NVREST_BEGIN_NAMESPACE(storages)
 
 class StorageServer : public components::ComponentBase {

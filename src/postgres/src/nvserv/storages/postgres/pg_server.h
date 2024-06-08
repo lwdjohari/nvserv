@@ -2,6 +2,7 @@
 
 #include "nvserv/storages/postgres/declare.h"
 #include "nvserv/storages/postgres/pg_cluster_config.h"
+#include "nvserv/storages/postgres/pg_connection.h"
 #include "nvserv/storages/postgres/pg_transaction.h"
 #include "nvserv/storages/storage_server.h"
 
