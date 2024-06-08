@@ -1,7 +1,8 @@
 #pragma once
+#include <absl/container/node_hash_map.h>
+
 #include <memory>
 #include <unordered_map>
-#include <absl/container/node_hash_map.h>
 
 #include "nvserv/components/component_base.h"
 #include "nvserv/components/component_config.h"
@@ -9,6 +10,7 @@
 #include "nvserv/global_macro.h"
 #if NVSERV_SERVER_GRPC == 1
 #include "nvserv/handlers/grpc_service_handler.h"
+#include "nvserv/server/grpc_server.h"
 #endif
 
 #if NVSERV_SERVER_REST == 1
@@ -16,7 +18,7 @@
 #include "nvserv/handlers/http_json_handler.h"
 #endif
 
-#include "nvserv/server/grpc_server.h"
+#include "nvserv/logs/log.h"
 
 NVREST_BEGIN_NAMESPACE(components)
 
@@ -46,7 +48,7 @@ class ComponentList final {
 
   template <typename TComponent>
   ComponentList& RegisterGrpcServiceHandler(const std::string& endpoint,
-                                     bool auth = false);
+                                            bool auth = false);
 
 #endif
 
@@ -102,8 +104,8 @@ ComponentList& ComponentList::RegisterGrpcServiceHandler(bool auth) {
 }
 
 template <typename TComponent>
-ComponentList& ComponentList::RegisterGrpcServiceHandler(const std::string& endpoint,
-                                                  bool auth) {
+ComponentList& ComponentList::RegisterGrpcServiceHandler(
+    const std::string& endpoint, bool auth) {
   return *this;
 }
 

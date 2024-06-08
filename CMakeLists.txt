@@ -176,6 +176,9 @@ endif()
 #     add_subdirectory(deps/nvapi build-nvapi)
 # endif()
 
+#spdlog
+add_subdirectory(deps/spdlog build-spdlog)
+
 #nvserv-core
 add_subdirectory(src/core/ build-nvserv_core)
 

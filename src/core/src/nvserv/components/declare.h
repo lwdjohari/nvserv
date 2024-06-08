@@ -24,7 +24,8 @@ enum class ComponentType {
   kHandlerBasic = 8,
   kHandlerGrpc = 9,
   kHandlerTcpSocket = 10,
-  kHandlerUdpSocket = 11
+  kHandlerUdpSocket = 11,
+  kLogging = 12
 };
 
 NVM_ENUM_CLASS_DISPLAY_TRAIT(ComponentType)
