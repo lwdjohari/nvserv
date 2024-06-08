@@ -17,8 +17,12 @@ class ClusterConfig;
 class ExecutionResult;
 class RowResult;
 class PreparedStatementManager;
-namespace postgres{
-    class PgServer;
+class StorageConfig;
+class Connection;
+class ConnectionPool;
+
+namespace postgres {
+class PgServer;
 }
 
 using StorageServerPtr = std::shared_ptr<StorageServer>;
@@ -28,6 +32,8 @@ using ClusterConfigListType = std::vector<ClusterConfig>;
 using ExecutionResultPtr = std::shared_ptr<ExecutionResult>;
 using RowResultPtr = std::shared_ptr<RowResult>;
 using PreparedStatementManagerPtr = std::shared_ptr<PreparedStatementManager>;
+using ConnectionPtr = std::shared_ptr<Connection>;
+using ConnectionPoolPtr = std::shared_ptr<ConnectionPool>;
 
 /// @brief NvServ storage driver
 enum class StorageType {
@@ -60,6 +66,75 @@ NVM_ENUM_TO_STRING_FORMATTER(StorageType, case StorageType::Unknown
                              : return "Parquet";
                              case StorageType::NvXcel
                              : return "NvXcel";)
+
+/// @brief TransactionMode to set,
+/// each features in certain DB if the characteristics of transaction is not far
+/// different
+// from other concept one that fits inot that category will be created the
+// fallback mechanism.
+/// For one that only specific to that DB implementations might throw an
+/// exceptions.
+enum class TransactionMode : uint16_t {
+  // No TransactionMode supported
+  Unknown = 0,
+  // R/W operation
+  //
+  // Support: pg, oracle, mysql
+  ReadWrite = 1,
+  // Read only commited data
+  //
+  // Support: pg, oracle, mysql
+  ReadCommitted = 2,
+  // Read only operations in pg, fallback to ReadCommitted in oracle & mysql
+  //
+  // Support: pg.
+  // Fallback: ReadCommitted in oracle & mysql.
+  ReadOnly = 4
+};
+
+NVM_ENUMCLASS_ENABLE_BITMASK_OPERATORS(TransactionMode)
+
+NVM_ENUM_CLASS_DISPLAY_TRAIT(TransactionMode)
+
+NVM_ENUM_TO_STRING_FORMATTER(TransactionMode, case TransactionMode::Unknown
+                             : return "Unknown";
+                             case TransactionMode::ReadWrite
+                             : return "ReadWrite";
+                             case TransactionMode::ReadCommitted
+                             : return "ReadCommitted";
+                             case TransactionMode::ReadOnly
+                             : return "ReadOnly";)
+
+enum class ConnectionMode {
+  Unknown = 0,
+  Server = 1,
+  ServerCluster = 2,
+  File = 4
+};
+
+NVM_ENUM_CLASS_DISPLAY_TRAIT(ConnectionMode);
+
+NVM_ENUM_TO_STRING_FORMATTER(ConnectionMode, case ConnectionMode::Unknown
+                             : return "Unknown";
+                             case ConnectionMode::Server
+                             : return "Server";
+                             case ConnectionMode::ServerCluster
+                             : return "ServerCluster";
+                             case ConnectionMode::File
+                             : return "File";)
+
+enum class ConnectionStandbyMode { None = 0, Primary = 1, Standby = 2 };
+
+NVM_ENUM_CLASS_DISPLAY_TRAIT(ConnectionStandbyMode)
+
+NVM_ENUM_TO_STRING_FORMATTER(ConnectionStandbyMode,
+                             case ConnectionStandbyMode::None
+                             : return "None";
+                             case ConnectionStandbyMode::Primary
+                             : return "Primary";
+                             case ConnectionStandbyMode::Standby
+                             : return "Standby";)
+
 
 class StorageInfo {
  public:
