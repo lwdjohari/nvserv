@@ -11,9 +11,9 @@ NVREST_BEGIN_NAMESPACE(storages)
 class ClusterConfigBase {
  public:
   virtual StorageType Type() const = 0;
-  virtual const __NR_STRING_COMPAT_REF User() const = 0;
-  virtual const __NR_STRING_COMPAT_REF Password() const = 0;
-  virtual const __NR_STRING_COMPAT_REF Host() const = 0;
+  virtual const std::string& User() const = 0;
+  virtual const std::string& Password() const = 0;
+  virtual const std::string& Host() const = 0;
   virtual std::string GetConfig() const = 0;
   virtual uint32_t Port() const = 0;
 };
@@ -72,15 +72,15 @@ class ClusterConfig : public ClusterConfigBase {
                     port_(port),
                     type_(type) {}
 
-  const __NR_STRING_COMPAT_REF User() const override {
+  const std::string& User() const override {
     return user_;
   }
 
-  const __NR_STRING_COMPAT_REF Password() const override {
+  const std::string& Password() const override {
     return password_;
   }
 
-  const __NR_STRING_COMPAT_REF Host() const override {
+  const std::string& Host() const override {
     return host_;
   }
 
