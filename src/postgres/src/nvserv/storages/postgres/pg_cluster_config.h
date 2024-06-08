@@ -3,6 +3,7 @@
 
 #include "nvserv/global_macro.h"
 #include "nvserv/storages/cluster_config.h"
+#include "nvserv/storages/config.h"
 
 NVREST_BEGIN_NAMESPACE(storages::postgres)
 
