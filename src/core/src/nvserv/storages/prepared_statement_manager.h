@@ -2,6 +2,7 @@
 
 #include <absl/container/node_hash_map.h>
 #include <nvm/dates/datetime.h>
+#include <nvm/macro.h>
 #include <nvm/strings/utility.h>
 
 #include <chrono>
@@ -48,12 +49,32 @@ class PreparedStatementItem {
   std::chrono::system_clock::time_point created_time_;
 };
 
-/// @brief Managing prepared statement query, class also can automatically to
-/// evict/invalidate cache by using LRU methods.
-class PreparedStatementManager : public std::enable_shared_from_this {
+/// @brief Managing prepared statement query, one connection will be have one
+/// PreparedStatementManager.
+class PreparedStatementManager : public std::enable_shared_from_this<PreparedStatementManager> {
  public:
   PreparedStatementManager(){};
   ~PreparedStatementManager(){};
+
+  std::optional<size_t> Register(
+                                 const std::string& query) {
+    if (query.empty())
+      return std::nullopt;
+
+    if (nvm::strings::utility::IsWhitespaceString(query))
+      return std::nullopt;
+
+    auto key = hash_fn_(query);
+
+    if (IsExist(key))
+      return false;
+
+    statements_.emplace(
+        key, std::move(PreparedStatementItem(
+                 key, std::string(std::to_string(key)), std::string(query),
+                 nvm::dates::DateTime::UtcNow().TzTime()->get_sys_time())));
+    return key;
+  }
 
   std::optional<size_t> Register(const std::string& name,
                                  const std::string& query) {
@@ -64,10 +85,21 @@ class PreparedStatementManager : public std::enable_shared_from_this {
       return std::nullopt;
 
     auto key = hash_fn_(query);
+
+    if (IsExist(key))
+      return false;
+
     statements_.emplace(
-        key, PreparedStatementItem(key, std::string(name), std::string(query),
-                                   nvm::dates::DateTime::UtcNow()));
+        key, std::move(PreparedStatementItem(
+                 key, std::string(name), std::string(query),
+                 nvm::dates::DateTime::UtcNow().TzTime()->get_sys_time())));
     return key;
+  }
+
+  
+
+  bool IsExist(const size_t& statement_key) const {
+    return statements_.contains(statement_key);
   }
 
   bool IsExist(const std::string& query) const {
@@ -75,8 +107,8 @@ class PreparedStatementManager : public std::enable_shared_from_this {
     return IsExist(key);
   }
 
-  bool IsExist(const size_t& statement_key) {
-    return statements_.contains(statement_key);
+  PreparedStatementManagerPtr Share() {
+    return this->shared_from_this();
   }
 
  private:
