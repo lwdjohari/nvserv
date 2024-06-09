@@ -3,21 +3,20 @@
 #include <chrono>
 #include <ostream>
 
-#include "nvserv/components/component_base.h"
+#include "nvserv/components/component.h"
 #include "nvserv/global_macro.h"
 #include "nvserv/storages/cluster_config.h"
-#include "nvserv/storages/declare.h"
 #include "nvserv/storages/connection_pool.h"
+#include "nvserv/storages/declare.h"
 
 NVREST_BEGIN_NAMESPACE(storages)
 
-class StorageServer : public components::ComponentBase {
+class StorageServer : public components::Component {
  public:
   StorageServer(const components::ComponentLocator& locator,
                 const components::ComponentConfig& config,
-                components::ComponentType type, bool is_monitor)
-                  : components::ComponentBase(locator, config, type,
-                                              is_monitor) {}
+                components::ComponentType type)
+                  : components::Component(locator, config, type) {}
 
   virtual ~StorageServer(){};
 

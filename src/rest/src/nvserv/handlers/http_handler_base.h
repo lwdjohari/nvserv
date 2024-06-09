@@ -1,23 +1,20 @@
 #pragma once
 
 #include "nvserv/components/component.h"
-#include "nvserv/components/component_base.h"
-#include "nvserv/components/component_config.h"
-#include "nvserv/components/component_locator.h"
 #include "nvserv/global_macro.h"
 #include "nvserv/http/http_request.h"
 #include "nvserv/http/http_request_context.h"
 
 NVREST_BEGIN_NAMESPACE(handlers)
 
-class HttpHandlerBase : public components::ComponentBase {
+class HttpHandlerBase : public components::Component {
  private:
  public:
   HttpHandlerBase(const components::ComponentLocator& locator,
                   const components::ComponentConfig& config,
-                  components::ComponentType type,
-                  bool is_monitor = false)
-                  : ComponentBase(locator, config,type,is_monitor){};
+                  components::ComponentType type
+                  )
+                  : Component(locator, config,type){};
   ~HttpHandlerBase(){};
 
  protected:

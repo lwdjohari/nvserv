@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 project(nvserv CXX)
 
-
+message(STATUS "NvServ Server: Configure")
+message(STATUS "-----------------------")
 
 #Main headers and sources
 file(GLOB_RECURSE SOURCES_NVSERV_SERVER CONFIGURE_DEPENDS

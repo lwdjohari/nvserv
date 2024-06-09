@@ -1,13 +1,10 @@
 #pragma once
-#include "nvserv/components/component_config.h"
-#include "nvserv/components/component_locator.h"
 #include "nvserv/components/declare.h"
 #include "nvserv/declare.h"
 
 // cppcheck-suppress unknownMacro
 NVREST_BEGIN_NAMESPACE(components)
 
-using ComponentBasePtr = std::shared_ptr<ComponentBase>;
 
 namespace impl {
 #if __NR_CPP17
@@ -29,7 +26,7 @@ auto GetComponentName() -> decltype(std::string{T::ComponentName}) {
 
 class ComponentHolder  {
  public:
-  explicit ComponentHolder(
+  explicit ComponentHolder(const std::string& name,
       ComponentBase&& component, bool is_auth = false,
       const std::string& config_section_name = std::string())
                   : components_(std::make_shared<ComponentBase>(
@@ -42,6 +39,10 @@ class ComponentHolder  {
   ComponentHolder(ComponentHolder&&) = delete;
   ComponentHolder& operator=(const ComponentHolder&) = delete;
   ComponentHolder& operator=(ComponentHolder&&) = delete;
+
+  const std::string& Name() const{
+    return name_;
+  }
 
   ComponentBasePtr Component() const {
     return components_;
@@ -56,6 +57,7 @@ class ComponentHolder  {
   }
 
  private:
+  std::string name_;
   ComponentBasePtr components_;
   std::string config_section_name_;
   bool is_auth_;
@@ -64,9 +66,7 @@ class ComponentHolder  {
 class ComponentBase {
  private:
  public:
-  explicit ComponentBase(const components::ComponentLocator& locator,
-                         const components::ComponentConfig& config,
-                         ComponentType type, bool is_monitor = false);
+  
   virtual ~ComponentBase(){};
 
   const ComponentType& Type() const {
@@ -74,6 +74,9 @@ class ComponentBase {
   }
 
  protected:
+  explicit ComponentBase(const components::ComponentLocator& locator,
+                         const components::ComponentConfig& config,
+                         ComponentType type, bool is_monitor = false);
   ComponentType component_type_;
 };
 

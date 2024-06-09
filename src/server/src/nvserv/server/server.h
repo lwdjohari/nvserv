@@ -1,8 +1,10 @@
 #include "nvm/macro.h"
+#include "nvserv/components/component.h"
 #include "nvserv/components/component_list.h"
 #include "nvserv/declare.h"
-
 #include "nvserv/global_macro.h"
+#include "nvserv/server/main_execution_context.h"
+#include "nvserv/server/server_base.h"
 #include "nvserv/server/worker_config.h"
 
 #if NVSERV_SERVER_REST == 1
@@ -16,12 +18,13 @@
 // cppcheck-suppress unknownMacro
 NVREST_BEGIN_NAMESPACE(server)
 
-inline int RunServer(components::ComponentList& components, int argc,
-                     char* argv[]) {
-  return 0;
+inline MainExecutionContext& CreateServerContext(const std::string& name,
+                                                 int argc, char* argv[]) {
+  MainExecutionContext::CreateContext(name);
+  return MainExecutionContext::Context();
 }
 
-inline int RunServer(components::ComponentList& components) {
-  return RunServer(components, 0, nullptr);
+inline MainExecutionContext& CreateServerContext(const std::string& name) {
+  return CreateServerContext(name, 0, nullptr);
 }
 NVREST_END_NAMESPACE

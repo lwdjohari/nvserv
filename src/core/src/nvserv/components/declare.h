@@ -11,6 +11,17 @@ class ComponentLocator;
 class ComponentConfig;
 class ComponentBase;
 class Component;
+class ComponentListBase;
+class ComponentList;
+class ComponentLocator;
+
+using ComponentListBasePtr = std::shared_ptr<ComponentListBase>;
+using ComponentListPtr = std::shared_ptr<ComponentList>;
+using ComponentBasePtr = std::shared_ptr<ComponentBase>;
+using ComponentLocatorPtr = std::shared_ptr<ComponentLocator>;
+using ComponentPtr = std::shared_ptr<Component>;
+using ComponentConfigPtr = std::shared_ptr<ComponentConfig>;
+
 
 enum class ComponentType {
   kInknown = 0,

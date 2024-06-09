@@ -1,9 +1,15 @@
 #include "nvserv/components/component_list.h"
 
+#include "component_list.h"
+
 // cppcheck-suppress unknownMacro
 NVREST_BEGIN_NAMESPACE(components)
 
-ComponentList::ComponentList() : components_() {}
+ComponentList::ComponentList(ComponentLocator& resolver,
+                             ComponentConfig& config)
+                : ComponentListBase(resolver, config) {}
+
+ComponentList::~ComponentList() {}
 
 ComponentList& ComponentList::SetupServer(const std::string& server_name,
                                           ServerType type) {
@@ -19,15 +25,26 @@ ComponentList& ComponentList::SetupServer(const std::string& server_name,
                                           ServerType type,
                                           const std::string& host,
                                           uint32_t port) {
+  CleanUpRegistrant();
+
   if (port == 0)
     port = 9001;
 
 #if NVSERV_SERVER_GRPC == 1
   if (type == ServerType::Grpc) {
-    components_.emplace(std::string(server_name),
-                        std::make_shared<ComponentHolder>(
-                            std::move(server::GrpcServer(*locator_, *config_)),
-                            false, std::move(std::string(server_name))));
+    RegisterComponentImpl(
+        server_name,
+        std::make_shared<ComponentHolder>(
+            std::string(server_name),
+            std::move(server::GrpcServer(resolver_, config_resolver_)), false,
+            std::move(std::string(server_name))));
+
+    // components_.emplace(std::string(server_name),
+    //                     std::make_shared<ComponentHolder>(
+    //                         std::string(server_name),
+    //                         std::move(server::GrpcServer(*locator_,
+    //                         *config_)), false,
+    //                         std::move(std::string(server_name))));
 
     return *this;
   }
@@ -38,6 +55,36 @@ ComponentList& ComponentList::SetupServer(const std::string& server_name,
 #endif
 
   return *this;
+}
+
+LoggerComponentRegistration& ComponentList::RegisterLogger(
+    const std::string& name) {
+  CleanUpRegistrant();
+
+  RegisterComponentImpl(
+      "logging-component",
+      std::make_shared<ComponentHolder>(
+          "logging-component",
+          std::move(logs::Logging(resolver_, config_resolver_)), false,
+          "server::logging"));
+
+  auto logs = std::dynamic_pointer_cast<logs::Logging>(
+      GetComponent("logging-component"));
+
+  logs->Initialize(name);
+  logger_register_ =
+      std::make_shared<LoggerComponentRegistration>(*logs, *this);
+  return *logger_register_;
+}
+
+void ComponentList::CleanUpRegistrant() {
+  if (logger_register_)
+    logger_register_ = nullptr;
+}
+
+ComponentListBasePtr ComponentLocator::InitializeImpl(
+    ComponentLocator& resolver, ComponentConfig& configs) {
+  return std::make_shared<ComponentList>(resolver, configs);
 }
 
 NVREST_END_NAMESPACE

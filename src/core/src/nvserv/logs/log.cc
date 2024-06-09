@@ -4,8 +4,8 @@
 NVREST_BEGIN_NAMESPACE(logs)
 
 Logging::Logging(components::ComponentLocator& locator,
-                 const components::ComponentConfig& config, bool is_monitor)
-                : components::ComponentBase(
+                 const components::ComponentConfig& config)
+                : components::Component(
                       locator, config, components::ComponentType::kLogging),
                   loggers_(),
                   composite_sink_(

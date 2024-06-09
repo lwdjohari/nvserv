@@ -13,8 +13,7 @@ class PgServer final : public StorageServer {
   explicit PgServer(const components::ComponentLocator& locator,
                     const components::ComponentConfig& config)
                   : StorageServer(locator, config,
-                                  components::ComponentType::kPostgresFeature,
-                                  true),
+                                  components::ComponentType::kPostgresFeature),
                     configs_(storages::StorageType::Postgres) {}
   ~PgServer() {}
 

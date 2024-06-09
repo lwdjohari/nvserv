@@ -5,11 +5,14 @@
 #include "handlers/handlers.h"
 
 int main(int argc, char* argv[]) {
-  auto services =
-      nvserv::components::ComponentList()
-          .SetupServer("hello-world-grpc", nvserv::ServerType::Grpc, 9669)
-          .RegisterComponent<hello_world::UtilComponent>("util-component")
-          .RegisterGrpcServiceHandler<hello_world::OrderServiceImpl >();
+  auto services = nvserv::server::CreateServerContext("hello-grpc");
 
-  return nvserv::server::RunServer(services, argc, argv);
+  (*services.Components())
+      .SetupServer("hello-world-grpc", nvserv::ServerType::Grpc, 9669)
+      .RegisterComponent<hello_world::UtilComponent>("util-component")
+      .RegisterGrpcServiceHandler<hello_world::OrderServiceImpl>();
+
+  // return nvserv::server::RunServer("hello-world-grpc",std::move(services), argc, argv);
+
+  return 0;
 }

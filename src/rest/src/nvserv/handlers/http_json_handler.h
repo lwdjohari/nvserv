@@ -10,10 +10,9 @@ NVREST_BEGIN_NAMESPACE(handlers)
 class HttpJsonHandlerBase : public HttpHandlerBase {
  public:
   HttpJsonHandlerBase(const components::ComponentLocator& locator,
-                      const components::ComponentConfig& config,
-                      bool is_monitor = false)
-                  : HttpHandlerBase(locator, config, 
-                                    components::ComponentType::kHandlerJson,is_monitor) {}
+                      const components::ComponentConfig& config)
+                  : HttpHandlerBase(locator, config,
+                                    components::ComponentType::kHandlerJson) {}
 
   virtual formats::json::Value HandleJsonRequest(
       const http::HttpRequestContext& context, const http::HttpRequest& request,
@@ -21,9 +20,9 @@ class HttpJsonHandlerBase : public HttpHandlerBase {
 
  protected:
   void ParseRequestData(const http::HttpRequestContext& context,
-                        http::HttpRequest& request) const override{
-                            
-                        };
+                        http::HttpRequest& request) const override {
+
+  };
 
  private:
 };

@@ -2,7 +2,7 @@
 #include <memory>
 #include <vector>
 
-#include "nvserv/components/component_base.h"
+#include "nvserv/components/component.h"
 #include "nvserv/logs/declare.h"
 #include "spdlog/logger.h"
 #include "spdlog/sinks/basic_file_sink.h"
@@ -20,10 +20,10 @@
 
 NVREST_BEGIN_NAMESPACE(logs)
 
-class Logging : public components::ComponentBase {
+class Logging : public components::Component {
  public:
   Logging(components::ComponentLocator& locator,
-          const components::ComponentConfig& config, bool is_monitor = false);
+          const components::ComponentConfig& config);
 
   virtual ~Logging();
 

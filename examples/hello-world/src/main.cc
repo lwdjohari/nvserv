@@ -8,27 +8,33 @@
 #include "nvserv/server/server.h"
 
 int main(int argc, char* argv[]) {
-  auto locator = nvserv::components::ComponentLocator();
-  auto config = nvserv::components::ComponentConfig();
-  auto log = nvserv::logs::Logging(locator, config);
+  auto context = nvserv::server::CreateServerContext("hello-world-rest");
+  auto components = context.Components();
 
-  log.Initialize("Hello-World-Rest")
+  (*components)
+      .RegisterLogger("Hello-World-Rest")
       .AddDefaultConsoleLogger(nvserv::logs::LogLevel::Debug)
       .AddFileLogger(nvserv::logs::LogLevel::Info, "hello-world.log")
-      .RegisterAll();
+      .RegisterAll()
+      .RegisterComponent<hello_world::UtilComponent>("util-component")
+      .RegisterHttpHandler<helloworld::HelloWorldHandler>("api/v1/hello")
+      .RegisterHttpHandler<helloworld::HelloWorldHandler>(
+          "api/v1/hello/{greeting}")
+      .SetupServer("hello-world-rest", nvserv::ServerType::Http2Auto, 9669);
 
-  log.LogInfo("NvServ | Server Starting");
-  log.LogTrace("Should be invisible");
-  log.LogDebug("NvServ Debug Mode, should be invisible");
+  auto log = std::dynamic_pointer_cast<nvserv::logs::Logging>(
+      context.ComponentResolver()->Resolve("logging-component"));
 
-  auto services =
-      nvserv::components::ComponentList()
-          .SetupServer("hello-world-rest", nvserv::ServerType::Http2Auto, 9669)
-          .RegisterComponent<hello_world::UtilComponent>("util-component")
-          .RegisterHttpHandler<helloworld::HelloWorldHandler>("api/v1/hello")
-          .RegisterHttpHandler<helloworld::HelloWorldHandler>(
-              "api/v1/hello/{greeting}");
+  
+    log->LogInfo("NvServ | Server Starting");
+    log->LogTrace("Should be invisible");
+    log->LogDebug("NvServ Debug Mode, should be invisible");
 
-  log.LogWarning("Experimental, not for use in production yet!");
-  return nvserv::server::RunServer(services, argc, argv);
+    log->LogWarning("Experimental, not for use in production yet!");
+
+    
+//    nvserv::server::RunServer("hello-world-grpc",std::move(services), argc,
+//    argv);
+
+  return 0;
 }

@@ -9,7 +9,7 @@
 
 NVREST_BEGIN_NAMESPACE(server)
 
-class ServerBase : public components::ComponentBase {
+class ServerBase : public components::Component {
  public:
   virtual ~ServerBase(){};
 
@@ -25,7 +25,7 @@ class ServerBase : public components::ComponentBase {
   ServerBase(components::ComponentLocator& locator,
              components::ComponentConfig& config,
              nvserv::components::ComponentType type)
-                  : components::ComponentBase(locator, config, type) {}
+                  : components::Component(locator, config, type) {}
 };
 
 NVREST_END_NAMESPACE
