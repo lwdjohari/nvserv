@@ -10,7 +10,7 @@
 #include "spdlog/sinks/sink.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/spdlog.h"
-
+#include "nvserv/exceptions.h"
 /**
  * TODO:
  * 1. Support custom logger
@@ -27,13 +27,27 @@ class Logging : public components::ComponentBase {
 
   virtual ~Logging();
 
+  Logging& Initialize(const std::string& log_name);
+
   Logging& AddDefaultConsoleLogger(LogLevel level);
 
   Logging& AddFileLogger(LogLevel level, const std::string& filename);
 
-  void Build(LogLevel level);
+  void RegisterAll(bool set_global_level = false, LogLevel level = LogLevel::Trace);
 
   void Log(LogLevel level, const std::string& message) const;
+
+  void LogTrace(const std::string& message) const;
+
+  void LogDebug(const std::string& message) const;
+
+  void LogInfo(const std::string& message) const;
+
+  void LogWarning(const std::string& message) const;
+
+  void LogError(const std::string& message) const;
+
+  void LogCritical(const std::string& message) const;
 
  private:
   std::vector<std::shared_ptr<spdlog::logger>> loggers_;

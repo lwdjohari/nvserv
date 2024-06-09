@@ -3,6 +3,7 @@
 #include "nvserv/global_macro.h"
 #include <nvm/macro.h>
 
+// cppcheck-suppress unknownMacro
 NVREST_BEGIN_NAMESPACE(logs)
 
 enum class LogType{

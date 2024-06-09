@@ -49,10 +49,10 @@ target_include_directories(${PROJECT_NAME}
 )
 
 
-if(Sanitizers_FOUND)
-    add_sanitizers("${PROJECT_NAME}")
-    message(STATUS "${PROJECT_NAME}::ASAN:ON.")
-endif()
+# if(Sanitizers_FOUND)
+#     add_sanitizers("${PROJECT_NAME}")
+#     message(STATUS "${PROJECT_NAME}::ASAN:ON.")
+# endif()
    
 
 message(STATUS "${PROJECT_NAME} Configuration Done!\n")
