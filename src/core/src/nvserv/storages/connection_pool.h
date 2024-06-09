@@ -1,5 +1,7 @@
 #pragma once
 
+#include <absl/container/node_hash_map.h>
+
 #include <deque>
 #include <queue>
 #include <thread>
@@ -11,7 +13,6 @@
 #include "nvserv/storages/config.h"
 #include "nvserv/storages/connection.h"
 #include "nvserv/storages/declare.h"
-
 // cppcheck-suppress unknownMacro
 NVREST_BEGIN_NAMESPACE(storages)
 
@@ -22,14 +23,10 @@ namespace impl {
 class ConnectionPoolImpl {
  public:
   explicit ConnectionPoolImpl(StorageConfig& config)
-                  : config_(config), is_run_(false) {}
+                  : acquired_(), config_(config), is_run_(false) {}
 
   ~ConnectionPoolImpl() {
     Stop();
-    if (thread_ping_.joinable())
-      thread_ping_.join();
-    if (thread_cleanup_.joinable())
-      thread_cleanup_.join();
   }
 
   void Run(const ConnectionCreatePrimaryCallback callback) {
@@ -112,6 +109,7 @@ class ConnectionPoolImpl {
 
     auto conn = connections_.front();
     connections_.pop();
+    acquired_.emplace(conn->GetHash(), conn);
     conn->Acquire();
     return conn;
   }
@@ -120,8 +118,12 @@ class ConnectionPoolImpl {
     if (!conn)
       return false;
     absl::MutexLock lock(&mutex_main_);
+    if (!acquired_.contains(conn->GetHash()))
+      return false;
+    auto key = conn->GetHash();
     conn->Returned();
-    connections_.push(conn);
+    connections_.push(std::move(conn));
+    acquired_.erase(key);
     cv_main_.Signal();
     return true;
   }
@@ -131,6 +133,7 @@ class ConnectionPoolImpl {
   }
 
  private:
+  absl::node_hash_map<size_t, ConnectionPtr> acquired_;
   StorageConfig& config_;
   std::queue<ConnectionPtr> connections_;
   // Main mutex to handle the data
