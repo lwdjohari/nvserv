@@ -1,6 +1,3 @@
-[submodule "deps/nvcore"]
-	path = deps/nvcore
-	url = https://github.com/lwdjohari/nvcore.git
 [submodule "deps/nvapi"]
 	path = deps/nvapi
 	url = https://github.com/lwdjohari/nvapi.git
