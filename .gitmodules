@@ -22,9 +22,6 @@
 [submodule "deps/spdlog"]
 	path = deps/spdlog
 	url = https://github.com/gabime/spdlog.git
-[submodule "deps/nvql"]
-	path = deps/nvql
-	url = https://github.com/lwdjohari/nvql.git
 [submodule "deps/nvlog"]
 	path = deps/nvlog
 	url = https://github.com/lwdjohari/nvlog.git
