@@ -28,3 +28,6 @@
 [submodule "deps/nvlog"]
 	path = deps/nvlog
 	url = https://github.com/lwdjohari/nvlog.git
+[submodule "deps/nvcore"]
+	path = deps/nvcore
+	url = https://github.com/lwdjohari/nvcore.git
