@@ -2,12 +2,66 @@ cmake_minimum_required(VERSION 3.10)
 project(nvserv CXX)
 
 
-# Include custom FindH2O module
-find_package(Wslay REQUIRED)
-if(NOT WSLAY_FOUND)
-    message(FATAL_ERROR "wslay library not found")
+
+#  feature
+# Network
+option(NVSERV_FEATURE_ENVOY "Integrate Envoy Dataplane Library" OFF)
+
+# Print the Piconout FEATURES
+message(STATUS "Piconout FEATURES.")
+message(STATUS "Core: ON")
+
+message(STATUS "NvLog: ON")
+
+#H2O options
+option(H2O_USE_LIBUV OFF)
+set(H2O_USE_LIBUV OFF)
+
+message(STATUS "")
+
+include(ProjectCXX)
+set(ISROOT FALSE)
+NV_DETECT_IS_ROOT_PROJECT(ISROOT)
+message(STATUS "NvServ Root Project: ${ISROOT} ${PCN_CXX_VERSION}")
+
+
+# Add Unit Test Lib Catch2
+if(PCN_USE_CATCH)
+ message(STATUS  "CATCH2::ADD_LIB.")
+ find_package(Catch2 3 REQUIRED)
 endif()
-find_package(H2O REQUIRED)
+
+find_package(Threads REQUIRED)
+
+
+# if(NOT nvcore_FOUND)
+#     message(STATUS "Nvql lib nvcore: Initialize NvCore lib.")
+#     add_subdirectory(src/core/ build-nvserv_core)
+# else()
+#     message(STATUS "Nvql lib nvcore: Abseil lib are already set, use ABSL from project.")
+# endif()
+
+
+if (TARGET absl::base)
+    message(STATUS "Nvrest lib ABSL: Abseil lib are already set, use ABSL from project.")
+else ()
+    message(STATUS "Nvrest lib ABSL: initialize Abseil lib.")
+    set(ABSL_PROPAGATE_CXX_STD ON)
+    add_subdirectory(deps/abseil-lts20230125.1 build-abseil)
+endif ()
+
+
+message(STATUS  "LibH2O: ON")
+find_package(H2O_EVLOOP REQUIRED)
+
+if (NOT nvcore_FOUND)
+    message(STATUS  "NvCore: ON")
+    add_subdirectory(deps/nvcore build-nvcore)
+endif()
+
+if(NOT nvlog_FOUND)
+    add_subdirectory(deps/nvlog build-nvlog)
+endif()
 
 
 #Main headers and sources

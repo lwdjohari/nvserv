@@ -43,7 +43,6 @@ target_link_libraries(${PROJECT_NAME}_core
         absl::time
         absl::utility
         absl::status
-        spdlog::spdlog
     )
 set_target_properties(${PROJECT_NAME}_core PROPERTIES LINKER_LANGUAGE CXX)
 target_compile_features(${PROJECT_NAME}_core PUBLIC ${CXX_FEATURE})
