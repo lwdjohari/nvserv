@@ -177,48 +177,49 @@ endif()
 # endif()
 
 #spdlog
-add_subdirectory(deps/spdlog build-spdlog)
+# add_subdirectory(deps/spdlog build-spdlog)
 
 #nvserv-core
 add_subdirectory(src/core/ build-nvserv_core)
+add_subdirectory(deps/nvql build-nvql)
 
 # nvserv::rest
-if(NVSERV_SERVER_REST)
-  add_subdirectory(src/rest/ build-nvserv_rest)
-endif()
+# if(NVSERV_SERVER_REST)
+#   add_subdirectory(src/rest/ build-nvserv_rest)
+# endif()
 
 # nvserv::grpc
-if(NVSERV_SERVER_GRPC)
-find_package(Protobuf CONFIG REQUIRED)
-find_package(gRPC CONFIG REQUIRED)
+# if(NVSERV_SERVER_GRPC)
+# find_package(Protobuf CONFIG REQUIRED)
+# find_package(gRPC CONFIG REQUIRED)
 
-# Print the found versions
-  if(Protobuf_FOUND)
-      message(STATUS "Found Protobuf version ${Protobuf_VERSION}")
-  else()
-      message(FATAL_ERROR "Protobuf not found")
-  endif()
+# # Print the found versions
+#   if(Protobuf_FOUND)
+#       message(STATUS "Found Protobuf version ${Protobuf_VERSION}")
+#   else()
+#       message(FATAL_ERROR "Protobuf not found")
+#   endif()
 
-  if(gRPC_FOUND)
-      message(STATUS "Found gRPC version ${gRPC_VERSION}")
-  else()
-      message(FATAL_ERROR "gRPC not found")
-  endif()
+#   if(gRPC_FOUND)
+#       message(STATUS "Found gRPC version ${gRPC_VERSION}")
+#   else()
+#       message(FATAL_ERROR "gRPC not found")
+#   endif()
 
-  SET(GRPC_LIBRARIES)
-  LIST(APPEND GRPC_LIBRARIES 
-    protobuf::libprotobuf
-    gRPC::grpc
-    gRPC::grpc++
-    gRPC::grpc++_unsecure)
+#   SET(GRPC_LIBRARIES)
+#   LIST(APPEND GRPC_LIBRARIES 
+#     protobuf::libprotobuf
+#     gRPC::grpc
+#     gRPC::grpc++
+#     gRPC::grpc++_unsecure)
 
-  add_subdirectory(src/grpcl/ build-nvserv_grpcl)
-endif()
+#   add_subdirectory(src/grpcl/ build-nvserv_grpcl)
+# endif()
 
 # nvserv::rest
-if(NVSERV_FEATURE_POSTGRES)
-  add_subdirectory(src/postgres/ build-nvserv_postgres)
-endif()
+# if(NVSERV_FEATURE_POSTGRES)
+#   add_subdirectory(src/postgres/ build-nvserv_postgres)
+# endif()
 
 
 # nvserv-server
@@ -234,9 +235,9 @@ add_subdirectory(src/server/ build-nvserv_server)
 message(STATUS "NvServ LIB Configuration Done!\n")
 set(nvserv_FOUND  ON)
 
-if(NVSERV_BUILD_EXAMPLE)
-    add_subdirectory(examples/hello-world build-examples-hello-world)
-    add_subdirectory(examples/hello-world-grpc build-examples-hello-world-grpc)
-endif()
+# if(NVSERV_BUILD_EXAMPLE)
+#     add_subdirectory(examples/hello-world build-examples-hello-world)
+#     add_subdirectory(examples/hello-world-grpc build-examples-hello-world-grpc)
+# endif()
 
 message(STATUS "")
