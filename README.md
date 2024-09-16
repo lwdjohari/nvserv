@@ -1,9 +1,7 @@
 # NvServ
-Lightweight Server Development Framework (REST,SOCKET,GRPC) for C++17.<br/> 
-\[Plan for backward compat to C++14]
+Lightweight Server Development Framework (REST,SOCKET,GRPC) for C++17.
 
 > [!WARNING]
-> Currently compatibility with C++14 is not yet throughly tested.<br/>
 > Status : WIP, Experimental & Unstable.  
 
 # Development & Dependencies
