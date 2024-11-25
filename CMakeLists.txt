@@ -5,6 +5,9 @@ message( STATUS "NvServ REST FRAMEWORK v1")
 message( STATUS "-----------------------------")
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 # Main server development options
 option(NVSERV_SERVER_REST  "Develop for server-side or REST API server" ON)
 option(NVSERV_SERVER_GRPC "Develop for GRPC server" OFF)
@@ -35,16 +38,75 @@ option(NVSERV_FEATURE_VM_V8 "Server Side V8 Javascript engine" OFF)
 # You can override to set this to OFF and add your ABSL version
 option(NVSERV_LIBS_ABSL_USE_BUNDLE "Use Abseil that is bundled with NvServ" ON)
 
-# AVAILABLE ABSL 
-# 202301251
-# 202401161
-if(NOT NVSERV_LIBS_ABSL_VERSION)
-  set(NVSERV_LIBS_ABSL_VERSION 202301251)
+
+
+# GRPC
+# gRpc already have dependencies to Abseil, BoringSSL
+# so when it use or not we need this dependencies from grpc
+message(STATUS "Pull gRpc and it dependencies")
+message(STATUS "NvServ needed dependencies of Abseil & BoringSSL from gRpc")
+
+include(FetchContent)
+FetchContent_Declare(
+  gRPC
+  GIT_REPOSITORY https://github.com/grpc/grpc
+  GIT_TAG        v1.54.2 # e.g v1.54.2 didn't error build
+)
+set(FETCHCONTENT_QUIET OFF)
+
+set(ABSL_PROPAGATE_CXX_STD ON)
+
+# Enable gRPC CMake options before `FetchContent_MakeAvailable`
+# Disable unnecessary language support
+set(gRPC_BUILD_TESTS OFF CACHE BOOL "" FORCE)        # Skip tests
+set(gRPC_INSTALL OFF CACHE BOOL "" FORCE)           # Avoid global install
+set(gRPC_BUILD_GRPC_CPP_PLUGIN ON CACHE BOOL "" FORCE)
+set(gRPC_BUILD_CSHARP_EXT OFF CACHE BOOL "" FORCE)  # Disable C#
+set(gRPC_BUILD_GRPC_CSHARP_PLUGIN OFF CACHE BOOL "" FORCE) # Skip C# plugin
+set(gRPC_BUILD_GRPC_NODE_PLUGIN OFF CACHE BOOL "" FORCE)   # Skip Node.js
+set(gRPC_BUILD_GRPC_OBJECTIVE_C_PLUGIN OFF CACHE BOOL "" FORCE) # Skip Obj-C
+set(gRPC_BUILD_GRPC_PHP_PLUGIN OFF CACHE BOOL "" FORCE)    # Skip PHP
+set(gRPC_BUILD_GRPC_PYTHON_PLUGIN OFF CACHE BOOL "" FORCE) # Skip Python
+set(gRPC_BUILD_GRPC_RUBY_PLUGIN OFF CACHE BOOL "" FORCE)   # Skip Ruby
+
+
+# Use bundled dependencies for consistency
+set(gRPC_USE_BUNDLED_PROTOBUF ON CACHE BOOL "" FORCE)
+set(gRPC_USE_BUNDLED_ABSEIL ON CACHE BOOL "" FORCE)
+get_property(GRPC_TARGETS GLOBAL PROPERTY TARGETS)
+
+FetchContent_MakeAvailable(gRPC)
+
+message(STATUS "gRPC source: ${grpc_SOURCE_DIR}")
+message(STATUS "gRPC binary: ${grpc_BINARY_DIR}")
+
+if (TARGET grpc)
+    message(STATUS "gRPC: gRPC lib OK")
+else()
+    message(FATAL_ERROR "gRPC: Error gRPC  lib not found!")
 endif()
 
-if(NOT DEFINED NVSERV_LIBS_ABSL_USE_BUNDLE)
-  set(NVSERV_LIBS_ABSL_USE_BUNDLE ON)
+
+if (TARGET grpc++)
+    message(STATUS "gRPC: gRPC++ lib OK")
+else()
+    message(FATAL_ERROR "gRPC: Error gRPC++ lib not found!")
 endif()
+
+
+if (TARGET grpc_unsecure)
+    message(STATUS "gRPC: gRPC_unsecure lib OK")
+else()
+    message(FATAL_ERROR "gRPC: Error gRPC_unsecure lib not found!")
+endif()
+
+if (TARGET grpc++_reflection)
+    message(STATUS "gRPC: gRPC++_reflection lib OK")
+else()
+    message(FATAL_ERROR "gRPC: Error gRPC_reflection lib not found!")
+endif()
+
+
 
 # Print the NVSERV FEATURES
 message(STATUS "NVSERV FEATURES.")
@@ -105,7 +167,7 @@ if(ISROOT)
   set(NVSERV_USE_TEST ON)
   set(NVSERV_BUILD_EXAMPLE ON)
   set(NVSERV_SERVER_GRPC ON)
-  set(NVSERV_SERVER_REST ON)
+  set(NVSERV_SERVER_REST OFF)
   set(NVSERV_FEATURE_POSTGRES ON)
 
 endif()
@@ -155,18 +217,12 @@ endif()
 find_package(Threads REQUIRED)
 
 # Google Abseil
-if(NVSERV_LIBS_ABSL_VERSION EQUAL 202301251  AND NVSERV_LIBS_ABSL_USE_BUNDLE)
-  message(STATUS "Use Abseil Libs: ${NVSERV_LIBS_ABSL_VERSION}" )
-  add_subdirectory(deps/abseil-lts20230125.1 build-abseil)
-elseif(NVSERV_LIBS_ABSL_VERSION EQUAL 202401161 AND NVSERV_LIBS_ABSL_USE_BUNDLE)
-  message(STATUS "Use Abseil Libs: ${NVSERV_LIBS_ABSL_VERSION}" )
-  add_subdirectory(deps/abseil-lts20240116.1 build-abseil)
-elseif(NVSERV_LIBS_ABSL_USE_BUNDLE)
-  message(FATAL_ERROR "Not supported ABSEIL Version: ${NVSERV_LIBS_ABSL_VERSION}")
-else()
-  message("Use Abseil Libs: ABSEIL NOT USE FROM Bundle")
-endif()
-
+if (TARGET absl::base)
+    message(STATUS "Use Abseil Libs: ABSEIL from gRpc deps")
+    set(ABSL_PROPAGATE_CXX_STD ON)
+else ()
+    message(FATAL_ERROR "Use Abseil Libs: Error can not found ABSEIL ")
+endif ()
 
 if (NOT nvcore_FOUND)
     add_subdirectory(deps/nvcore build-nvcore)
@@ -176,9 +232,6 @@ endif()
 #     add_subdirectory(deps/nvapi build-nvapi)
 # endif()
 
-#spdlog
-# add_subdirectory(deps/spdlog build-spdlog)
-
 #nvserv-core
 add_subdirectory(src/core/ build-nvserv_core)
 add_subdirectory(deps/nvql build-nvql)
@@ -187,6 +240,66 @@ add_subdirectory(deps/nvql build-nvql)
 # if(NVSERV_SERVER_REST)
 #   add_subdirectory(src/rest/ build-nvserv_rest)
 # endif()
+
+# nvserv::grpc
+if(NVSERV_SERVER_GRPC)
+ # gRpc quite large so we are use FetchContent
+ # when the grpc is used, abseil and boringssl will be use 
+ # from gRpc to avoid conflict
+
+ # Print the found versions
+  # Check protobuf version
+  if (TARGET protobuf::libprotobuf)
+    get_target_property(PROTOBUF_VERSION protobuf::libprotobuf INTERFACE_COMPILE_DEFINITIONS)
+    message(STATUS "Protobuf: ${PROTOBUF_VERSION}")
+    # if (NOT PROTOBUF_VERSION VERSION_GREATER_EQUAL MIN_PROTOBUF_VERSION)
+    #   message(FATAL_ERROR "Protobuf version ${PROTOBUF_VERSION} is less than required ${MIN_PROTOBUF_VERSION}")
+    # endif()
+    else()
+    message(FATAL_ERROR "Protobuf: Protobuf not found")
+  endif()
+  
+  message(STATUS "gRPC source: ${grpc_SOURCE_DIR}")
+  message(STATUS "gRPC binary: ${grpc_BINARY_DIR}")
+
+  if (TARGET grpc)
+      message(STATUS "gRPC: gRPC lib OK")
+  else()
+      message(FATAL_ERROR "gRPC: Error gRPC  lib not found!")
+  endif()
+
+
+  if (TARGET grpc++)
+      message(STATUS "gRPC: gRPC++ lib OK")
+  else()
+      message(FATAL_ERROR "gRPC: Error gRPC++ lib not found!")
+  endif()
+
+
+  if (TARGET grpc_unsecure)
+      message(STATUS "gRPC: gRPC_unsecure lib OK")
+  else()
+      message(FATAL_ERROR "gRPC: Error gRPC_unsecure lib not found!")
+  endif()
+
+  if (TARGET grpc++_reflection)
+      message(STATUS "gRPC: gRPC++_reflection lib OK")
+  else()
+      message(FATAL_ERROR "gRPC: Error gRPC_reflection lib not found!")
+  endif()
+
+  
+  SET(GRPC_LIBRARIES)
+  LIST(APPEND GRPC_LIBRARIES 
+    protobuf::libprotobuf
+    grpc
+    grpc++
+    grpc++_unsecure)
+
+  
+  add_subdirectory(src/grpcl/ build-nvserv_grpcl)
+
+endif()
 
 # nvserv::grpc
 # if(NVSERV_SERVER_GRPC)

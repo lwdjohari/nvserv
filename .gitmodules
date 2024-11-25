@@ -7,14 +7,6 @@
 [submodule "deps/njson"]
 	path = deps/njson
 	url = https://github.com/nlohmann/json.git
-[submodule "deps/abseil-lts20240116.1"]
-	path = deps/abseil-lts20240116.1
-	url = https://github.com/abseil/abseil-cpp.git
-	branch = lts_2024_01_16
-[submodule "deps/abseil-lts20230125.1"]
-	path = deps/abseil-lts20230125.1
-	url = https://github.com/abseil/abseil-cpp.git
-	branch = lts_2023_01_25
 [submodule "deps/nvlog"]
 	path = deps/nvlog
 	url = https://github.com/lwdjohari/nvlog.git
@@ -24,3 +16,6 @@
 [submodule "deps/nvql"]
 	path = deps/nvql
 	url = https://github.com/lwdjohari/nvql.git
+[submodule "deps/asio"]
+	path = deps/asio
+	url = https://github.com/chriskohlhoff/asio.git
