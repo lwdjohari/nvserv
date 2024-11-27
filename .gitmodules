@@ -16,3 +16,6 @@
 [submodule "deps/asio"]
 	path = deps/asio
 	url = https://github.com/chriskohlhoff/asio.git
+[submodule "deps/nvql"]
+	path = deps/nvql
+	url = https://github.com/lwdjohari/nvql.git
