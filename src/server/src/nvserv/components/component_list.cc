@@ -91,6 +91,13 @@ NVSERV_END_NAMESPACE
 
 NVSERV_BEGIN_NAMESPACE(storages)
 namespace postgres {
+
+  /**
+   * Late binding PgServer::MakePgServer
+   * Because we have to wait if 
+   * CompenentList and ComponentLocator to be available first
+   */
+  
 PgServerPtr PgServer::MakePgServer(
     const std::string& name, std::initializer_list<PgClusterConfig> clusters,
     uint16_t pool_min_worker, u_int16_t pool_max_worker) {
