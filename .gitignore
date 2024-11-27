@@ -34,4 +34,5 @@
 /build
 /log
 /.bak
+/third_party
 .vscode

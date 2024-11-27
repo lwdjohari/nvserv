@@ -47,6 +47,8 @@ message(STATUS "Pull gRpc and it dependencies")
 message(STATUS "NvServ needed dependencies of Abseil & BoringSSL from gRpc")
 
 include(FetchContent)
+set(FETCHCONTENT_BASE_DIR ${CMAKE_SOURCE_DIR}/third_party)
+
 FetchContent_Declare(
   gRPC
   GIT_REPOSITORY https://github.com/grpc/grpc
@@ -233,7 +235,8 @@ endif()
 # endif()
 
 #nvserv-core
-add_subdirectory(src/core/ build-nvserv_core)
+add_subdirectory(deps/nvql/deps/nvserv-core/ build-nvserv_core)
+
 add_subdirectory(deps/nvql build-nvql)
 
 # nvserv::rest
@@ -250,7 +253,7 @@ if(NVSERV_SERVER_GRPC)
  # Print the found versions
   # Check protobuf version
   if (TARGET protobuf::libprotobuf)
-    get_target_property(PROTOBUF_VERSION protobuf::libprotobuf INTERFACE_COMPILE_DEFINITIONS)
+    #get_target_property(PROTOBUF_VERSION protobuf::libprotobuf INTERFACE_COMPILE_DEFINITIONS)
     message(STATUS "Protobuf: ${PROTOBUF_VERSION}")
     # if (NOT PROTOBUF_VERSION VERSION_GREATER_EQUAL MIN_PROTOBUF_VERSION)
     #   message(FATAL_ERROR "Protobuf version ${PROTOBUF_VERSION} is less than required ${MIN_PROTOBUF_VERSION}")
@@ -259,8 +262,10 @@ if(NVSERV_SERVER_GRPC)
     message(FATAL_ERROR "Protobuf: Protobuf not found")
   endif()
   
+  message(STATUS "grpc: ${gRPC_VERSION}")
   message(STATUS "gRPC source: ${grpc_SOURCE_DIR}")
   message(STATUS "gRPC binary: ${grpc_BINARY_DIR}")
+
 
   if (TARGET grpc)
       message(STATUS "gRPC: gRPC lib OK")
@@ -300,34 +305,6 @@ if(NVSERV_SERVER_GRPC)
   add_subdirectory(src/grpcl/ build-nvserv_grpcl)
 
 endif()
-
-# nvserv::grpc
-# if(NVSERV_SERVER_GRPC)
-# find_package(Protobuf CONFIG REQUIRED)
-# find_package(gRPC CONFIG REQUIRED)
-
-# # Print the found versions
-#   if(Protobuf_FOUND)
-#       message(STATUS "Found Protobuf version ${Protobuf_VERSION}")
-#   else()
-#       message(FATAL_ERROR "Protobuf not found")
-#   endif()
-
-#   if(gRPC_FOUND)
-#       message(STATUS "Found gRPC version ${gRPC_VERSION}")
-#   else()
-#       message(FATAL_ERROR "gRPC not found")
-#   endif()
-
-#   SET(GRPC_LIBRARIES)
-#   LIST(APPEND GRPC_LIBRARIES 
-#     protobuf::libprotobuf
-#     gRPC::grpc
-#     gRPC::grpc++
-#     gRPC::grpc++_unsecure)
-
-#   add_subdirectory(src/grpcl/ build-nvserv_grpcl)
-# endif()
 
 # nvserv::rest
 # if(NVSERV_FEATURE_POSTGRES)
