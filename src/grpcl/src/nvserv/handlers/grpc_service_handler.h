@@ -10,7 +10,7 @@
 #include "nvserv/components/component_config.h"
 #include "nvserv/components/component_locator.h"
 
-NVREST_BEGIN_NAMESPACE(handlers)
+NVSERV_BEGIN_NAMESPACE(handlers)
 
 // class RpcMethodHandlerBase {
 //  public:
@@ -132,4 +132,4 @@ NVREST_BEGIN_NAMESPACE(handlers)
 //   }
 // };
 
-NVREST_END_NAMESPACE
+NVSERV_END_NAMESPACE

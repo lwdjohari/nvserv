@@ -16,7 +16,7 @@
 #endif
 
 // cppcheck-suppress unknownMacro
-NVREST_BEGIN_NAMESPACE(server)
+NVSERV_BEGIN_NAMESPACE(server)
 
 inline MainExecutionContext& CreateServerContext(const std::string& name,
                                                  int argc, char* argv[]) {
@@ -27,4 +27,4 @@ inline MainExecutionContext& CreateServerContext(const std::string& name,
 inline MainExecutionContext& CreateServerContext(const std::string& name) {
   return CreateServerContext(name, 0, nullptr);
 }
-NVREST_END_NAMESPACE
+NVSERV_END_NAMESPACE

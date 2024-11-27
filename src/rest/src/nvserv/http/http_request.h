@@ -2,7 +2,7 @@
 
 #include "nvserv/http/declare.h"
 
-NVREST_BEGIN_NAMESPACE(http)
+NVSERV_BEGIN_NAMESPACE(http)
 
 class HttpRequest
 {
@@ -14,4 +14,4 @@ public:
 };
 
 
-NVREST_END_NAMESPACE
+NVSERV_END_NAMESPACE

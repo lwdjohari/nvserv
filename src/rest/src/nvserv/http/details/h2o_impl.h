@@ -7,7 +7,7 @@
 #include "nvserv/global_macro.h"
 
 //cppcheck-suppress unknownMacro
-NVREST_BEGIN_NAMESPACE(http::details)
+NVSERV_BEGIN_NAMESPACE(http::details)
 
 static h2o_globalconf_t config;
 static h2o_context_t ctx;
@@ -117,4 +117,4 @@ inline bool DisposeH2oServer(H2oServerPtr ptr) {
   return true;
 }
 
-NVREST_END_NAMESPACE
+NVSERV_END_NAMESPACE

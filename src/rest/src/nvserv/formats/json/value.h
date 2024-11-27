@@ -2,7 +2,7 @@
 
 #include "nvserv/formats/json/declare.h"
 
-NVREST_BEGIN_NAMESPACE(formats::json)
+NVSERV_BEGIN_NAMESPACE(formats::json)
 
 class Value
 {
@@ -15,4 +15,4 @@ public:
 
 
 
-NVREST_END_NAMESPACE
+NVSERV_END_NAMESPACE

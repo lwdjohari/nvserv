@@ -2,7 +2,7 @@
 
 
 //cppcheck-suppress unknownMacro
-NVREST_BEGIN_NAMESPACE(http)
+NVSERV_BEGIN_NAMESPACE(http)
 
 HttpServer::HttpServer(HttpVersion version, const std::string& host, int port,
                        int num_threads)
@@ -93,4 +93,4 @@ void HttpServer::SetupProtocol() {
   // }
 }
 
-NVREST_END_NAMESPACE
+NVSERV_END_NAMESPACE

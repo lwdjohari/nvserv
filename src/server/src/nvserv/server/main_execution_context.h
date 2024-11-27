@@ -5,7 +5,7 @@
 #include "nvserv/global_macro.h"
 #include "nvserv/headers/absl_thread.h"
 
-NVREST_BEGIN_NAMESPACE(server)
+NVSERV_BEGIN_NAMESPACE(server)
 
 class MainExecutionContext;
 
@@ -79,4 +79,4 @@ class MainExecutionContext final {
   static MainExecutionContextPtr g_main_context_;
   static absl::Mutex g_context_mutex_;
 };
-NVREST_END_NAMESPACE
+NVSERV_END_NAMESPACE

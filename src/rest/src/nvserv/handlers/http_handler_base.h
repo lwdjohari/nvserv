@@ -5,7 +5,7 @@
 #include "nvserv/http/http_request.h"
 #include "nvserv/http/http_request_context.h"
 
-NVREST_BEGIN_NAMESPACE(handlers)
+NVSERV_BEGIN_NAMESPACE(handlers)
 
 class HttpHandlerBase : public components::Component {
  private:
@@ -22,4 +22,4 @@ class HttpHandlerBase : public components::Component {
                                 http::HttpRequest& request) const = 0;
 };
 
-NVREST_END_NAMESPACE
+NVSERV_END_NAMESPACE

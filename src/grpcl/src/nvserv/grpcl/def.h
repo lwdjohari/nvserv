@@ -5,7 +5,7 @@
 #include <grpcpp/grpcpp.h>
 #include "nvserv/global_macro.h"
 
-NVREST_BEGIN_NAMESPACE(grpcl)
+NVSERV_BEGIN_NAMESPACE(grpcl)
 
 // template <typename T>
 // grpc::Status Serialize(const T& message, grpc::ByteBuffer* buffer) {
@@ -51,4 +51,4 @@ NVREST_BEGIN_NAMESPACE(grpcl)
 //   }
 // };
 
-NVREST_END_NAMESPACE
+NVSERV_END_NAMESPACE

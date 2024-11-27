@@ -18,7 +18,7 @@
 
 
 //cppcheck-suppress unknownMacro
-NVREST_BEGIN_NAMESPACE(http)
+NVSERV_BEGIN_NAMESPACE(http)
 
 enum class HttpVersion {
   Http2,    // Use only HTTP/2
@@ -60,4 +60,4 @@ class HttpServer : public std::enable_shared_from_this<HttpServer> {
   std::vector<std::thread> workers_;  // Vector of worker threads
 };
 
-NVREST_END_NAMESPACE
+NVSERV_END_NAMESPACE

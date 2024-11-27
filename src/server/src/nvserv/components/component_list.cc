@@ -3,7 +3,7 @@
 #include "component_list.h"
 
 // cppcheck-suppress unknownMacro
-NVREST_BEGIN_NAMESPACE(components)
+NVSERV_BEGIN_NAMESPACE(components)
 
 ComponentList::ComponentList(ComponentLocator& resolver,
                              ComponentConfig& config)
@@ -87,4 +87,15 @@ ComponentListBasePtr ComponentLocator::InitializeImpl(
   return std::make_shared<ComponentList>(resolver, configs);
 }
 
-NVREST_END_NAMESPACE
+NVSERV_END_NAMESPACE
+
+NVSERV_BEGIN_NAMESPACE(storages)
+namespace postgres {
+PgServerPtr PgServer::MakePgServer(
+    const std::string& name, std::initializer_list<PgClusterConfig> clusters,
+    uint16_t pool_min_worker, u_int16_t pool_max_worker) {
+  return nullptr;
+};
+
+}  // namespace postgres
+NVSERV_END_NAMESPACE

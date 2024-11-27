@@ -7,7 +7,7 @@
 
 
 //cppcheck-suppress unknownMacro
-NVREST_BEGIN_NAMESPACE(server)
+NVSERV_BEGIN_NAMESPACE(server)
 
 enum class WorkerType { IoWorker, FrameworkWorker };
 
@@ -39,4 +39,4 @@ class WorkerConfig {
 
 };
 
-NVREST_END_NAMESPACE
+NVSERV_END_NAMESPACE

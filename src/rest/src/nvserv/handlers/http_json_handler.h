@@ -5,7 +5,7 @@
 #include "nvserv/global_macro.h"
 #include "nvserv/handlers/http_handler_base.h"
 
-NVREST_BEGIN_NAMESPACE(handlers)
+NVSERV_BEGIN_NAMESPACE(handlers)
 
 class HttpJsonHandlerBase : public HttpHandlerBase {
  public:
@@ -27,4 +27,4 @@ class HttpJsonHandlerBase : public HttpHandlerBase {
  private:
 };
 
-NVREST_END_NAMESPACE
+NVSERV_END_NAMESPACE

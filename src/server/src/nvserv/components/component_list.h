@@ -14,12 +14,16 @@
 #include "nvserv/server/grpc_server.h"
 #endif
 
+#if NVSERV_FEATURE_POSTGRES == 1
+#include "nvserv/storages/postgres/pg_server.h"
+#endif
+
 #if NVSERV_SERVER_REST == 1
 #include "nvserv/handlers/http_basic_handler.h"
 #include "nvserv/handlers/http_json_handler.h"
 #endif
 
-NVREST_BEGIN_NAMESPACE(components)
+NVSERV_BEGIN_NAMESPACE(components)
 
 class LoggerComponentRegistration {
  public:
@@ -157,4 +161,4 @@ ComponentList& ComponentList::RegisterComponent(const std::string& config_name,
   return *this;
 }
 
-NVREST_END_NAMESPACE
+NVSERV_END_NAMESPACE

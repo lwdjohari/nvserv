@@ -13,7 +13,7 @@
 #include "nvserv/server/server_base.h"
 // cppcheck-supress unknownMacro
 
-NVREST_BEGIN_NAMESPACE(server)
+NVSERV_BEGIN_NAMESPACE(server)
 
 class GrpcServer final : public ServerBase {
  public:
@@ -90,4 +90,4 @@ class GrpcServer final : public ServerBase {
   int port_;
 };
 
-NVREST_END_NAMESPACE
+NVSERV_END_NAMESPACE

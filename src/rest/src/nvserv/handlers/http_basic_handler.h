@@ -2,7 +2,7 @@
 
 #include "nvserv/global_macro.h"
 
-NVREST_BEGIN_NAMESPACE(handlers)
+NVSERV_BEGIN_NAMESPACE(handlers)
 
 class HttpBasicHandler
 {
@@ -15,4 +15,4 @@ public:
 
 
 
-NVREST_END_NAMESPACE
+NVSERV_END_NAMESPACE
