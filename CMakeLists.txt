@@ -169,7 +169,7 @@ if(ISROOT)
   set(NVSERV_USE_TEST ON)
   set(NVSERV_BUILD_EXAMPLE ON)
   set(NVSERV_SERVER_GRPC ON)
-  set(NVSERV_SERVER_REST OFF)
+  set(NVSERV_SERVER_REST ON)
   set(NVSERV_FEATURE_POSTGRES ON)
 
 endif()
@@ -230,19 +230,15 @@ if (NOT nvcore_FOUND)
     add_subdirectory(deps/nvcore build-nvcore)
 endif()
 
-# if (NOT nvapi_FOUND)
-#     add_subdirectory(deps/nvapi build-nvapi)
-# endif()
 
 #nvserv-core
 add_subdirectory(deps/nvql/deps/nvserv-core/ build-nvserv_core)
-
 add_subdirectory(deps/nvql build-nvql)
 
 # nvserv::rest
-# if(NVSERV_SERVER_REST)
-#   add_subdirectory(src/rest/ build-nvserv_rest)
-# endif()
+if(NVSERV_SERVER_REST)
+  add_subdirectory(src/rest/ build-nvserv_rest)
+endif()
 
 # nvserv::grpc
 if(NVSERV_SERVER_GRPC)
