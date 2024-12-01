@@ -19,3 +19,6 @@
 [submodule "deps/nvql"]
 	path = deps/nvql
 	url = https://github.com/lwdjohari/nvql.git
+[submodule "deps/nghttp2"]
+	path = deps/nghttp2
+	url = https://github.com/nghttp2/nghttp2.git
