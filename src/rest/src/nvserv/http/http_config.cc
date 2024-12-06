@@ -3,7 +3,7 @@
 NVSERV_BEGIN_NAMESPACE(http)
 
 Config::Config()
-                : http_version_(HttpVersionMode::HTTP2_AUTO_FALLBACK),
+                : http_version_(HttpVersionMode::HTTP2_UPGRADE),
                   compression_(CompressionType::NONE),
                   xss_protection_(true),
                   csrf_protection_(false),

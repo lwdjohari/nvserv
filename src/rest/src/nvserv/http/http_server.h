@@ -13,7 +13,7 @@
 #include "nvm/macro.h"
 #include <nvserv/global.h>
 #include <nvserv/http/declare.h>
-#include <nvserv/http/details/h2o_impl.h>
+// #include <nvserv/http/details/h2o_impl.h>
 
 
 
@@ -46,14 +46,7 @@ class HttpServer : public std::enable_shared_from_this<HttpServer> {
   void Run();  // Worker thread function
   void SetupProtocol();
 
-//   h2o_globalconf_t config_;
-//   h2o_context_t ctx_;
-//   h2o_hostconf_t* hostconf_;
-//   h2o_pathconf_t* pathconf_;
-//   h2o_accept_ctx_t accept_ctx_;
-//   h2o_socket_t* http_sock_;
-//   h2o_socket_t* https_sock_;
-  details::H2oServerPtr server_;
+
   bool https_enabled_;
   int num_threads_;
   HttpVersion version_;

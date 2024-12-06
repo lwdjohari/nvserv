@@ -1,18 +1,18 @@
 #pragma once
 
-#include "piconaut/macro.h"
 #include <string>
 #include <unordered_map>
-#include <h2o.h>
 #include <stdexcept>
 
 #include "nvserv/http/declare.h"
+#include "nvserv/global.h"
+#include "nvserv/http/http_server_driver.h"
 
 NVSERV_BEGIN_NAMESPACE(http)
 
 class HttpRequest {
  public:
-    explicit HttpRequest(h2o_req_t* req);
+    explicit HttpRequest(HttpServerRequestDriver req); 
 
     std::string GetPath() const;
     std::string Method() const;
@@ -22,7 +22,7 @@ class HttpRequest {
     std::string GetQueryString(const std::string& name) const;
 
  private:
-    h2o_req_t* req_;
+    HttpServerRequestDriver req_;
 };
 
 

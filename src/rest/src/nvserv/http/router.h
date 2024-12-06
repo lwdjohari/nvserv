@@ -12,7 +12,7 @@
 #include "nvserv/http/router_node.h"
 #include "nvserv/utils/string_utils.h"
 
-NVSERV_BEGIN_NAMESPACE(route)
+NVSERV_BEGIN_NAMESPACE(http)
 struct RouterMatchResult {
   const Route::HandlerFn* executor;
   const size_t* key;
