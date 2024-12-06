@@ -29,12 +29,21 @@ message(STATUS "CXX Feature: ${CXX_FEATURE}")
 # find_package(gRPC REQUIRED)
 
 # Ensure the gRPC plugin is found
-if(NOT gRPC_CPP_PLUGIN_EXECUTABLE)
-    find_program(gRPC_CPP_PLUGIN_EXECUTABLE NAMES grpc_cpp_plugin PATHS ${GRPC_BIN_DIR} ENV PATH NO_DEFAULT_PATH)
-    if(NOT gRPC_CPP_PLUGIN_EXECUTABLE)
-        message(FATAL_ERROR "gRPC C++ plugin not found. Please ensure it is installed and available in your PATH.")
-    endif()
+# if(NOT gRPC_CPP_PLUGIN_EXECUTABLE)
+#     find_program(gRPC_CPP_PLUGIN_EXECUTABLE NAMES grpc_cpp_plugin PATHS ${GRPC_BIN_DIR} ENV PATH NO_DEFAULT_PATH)
+#     if(NOT gRPC_CPP_PLUGIN_EXECUTABLE)
+#         message(FATAL_ERROR "gRPC C++ plugin not found. Please ensure it is installed and available in your PATH.")
+#     endif()
+# endif()
+
+if(NOT Protobuf_PROTOC_EXECUTABLE OR NOT EXISTS ${Protobuf_PROTOC_EXECUTABLE})
+    message(FATAL_ERROR "Protobuf compiler not found or not set. Please ensure gRPC and Protobuf are built correctly.")
 endif()
+
+if(NOT gRPC_CPP_PLUGIN_EXECUTABLE OR NOT EXISTS ${gRPC_CPP_PLUGIN_EXECUTABLE})
+    message(FATAL_ERROR "gRPC C++ plugin not found or not set. Please ensure gRPC is built correctly.")
+endif()
+
 
 message(STATUS "Grpc plugin: ${gRPC_CPP_PLUGIN_EXECUTABLE}(${GRPC_BIN_DIR})")
 # Set paths
@@ -48,35 +57,70 @@ file(MAKE_DIRECTORY ${GENERATED_SRC_DIR})
 set(PROTO_FILES "${PROTO_SRC_DIR}/order_service.proto")
 
 # Define the custom commands to generate the C++ source and header files
+# foreach(PROTO_FILE ${PROTO_FILES})
+#     get_filename_component(PROTO_FILE_NAME ${PROTO_FILE} NAME_WE)
+#     message(STATUS "Compile proto: ${PROTO_FILE_NAME}")
+
+#     # Protobuf generation command
+#     set(PROTOBUF_CMD "${Protobuf_PROTOC_EXECUTABLE} --cpp_out=${GENERATED_SRC_DIR} -I ${PROTO_SRC_DIR} ${PROTO_FILE}")
+#     message(STATUS "Protobuf Command: ${PROTOBUF_CMD}")
+
+#     add_custom_command(
+#         OUTPUT ${GENERATED_SRC_DIR}/${PROTO_FILE_NAME}.pb.cc ${GENERATED_SRC_DIR}/${PROTO_FILE_NAME}.pb.h
+#         COMMAND ${Protobuf_PROTOC_EXECUTABLE}
+#         ARGS --cpp_out=${GENERATED_SRC_DIR} -I ${PROTO_SRC_DIR} ${PROTO_FILE}
+#         DEPENDS ${PROTO_FILE}
+#         COMMENT "Running protobuf compiler on ${PROTO_FILE}"
+#         VERBATIM
+#     )
+
+#     # gRPC generation command
+#     set(GRPC_CMD "${Protobuf_PROTOC_EXECUTABLE} --grpc_out=${GENERATED_SRC_DIR} --plugin=protoc-gen-grpc=${gRPC_CPP_PLUGIN_EXECUTABLE} -I ${PROTO_SRC_DIR} ${PROTO_FILE}")
+#     message(STATUS "gRPC Command: ${GRPC_CMD}")
+
+#     add_custom_command(
+#         OUTPUT ${GENERATED_SRC_DIR}/${PROTO_FILE_NAME}.grpc.pb.cc ${GENERATED_SRC_DIR}/${PROTO_FILE_NAME}.grpc.pb.h
+#         COMMAND ${Protobuf_PROTOC_EXECUTABLE}
+#         ARGS --grpc_out=${GENERATED_SRC_DIR} --plugin=protoc-gen-grpc=${gRPC_CPP_PLUGIN_EXECUTABLE} -I ${PROTO_SRC_DIR} ${PROTO_FILE}
+#         DEPENDS ${PROTO_FILE}
+#         COMMENT "Running gRPC compiler on ${PROTO_FILE}"
+#         VERBATIM
+#     )
+# endforeach()
+
+# Generate C++ source and header files for each proto during the configure step
 foreach(PROTO_FILE ${PROTO_FILES})
     get_filename_component(PROTO_FILE_NAME ${PROTO_FILE} NAME_WE)
-    message(STATUS "Compile proto: ${PROTO_FILE_NAME}")
+    message(STATUS "Compiling proto: ${PROTO_FILE_NAME}")
 
-    # Protobuf generation command
-    set(PROTOBUF_CMD "${Protobuf_PROTOC_EXECUTABLE} --cpp_out=${GENERATED_SRC_DIR} -I ${PROTO_SRC_DIR} ${PROTO_FILE}")
-    message(STATUS "Protobuf Command: ${PROTOBUF_CMD}")
-
-    add_custom_command(
-        OUTPUT ${GENERATED_SRC_DIR}/${PROTO_FILE_NAME}.pb.cc ${GENERATED_SRC_DIR}/${PROTO_FILE_NAME}.pb.h
+    # Protobuf generation
+    execute_process(
         COMMAND ${Protobuf_PROTOC_EXECUTABLE}
-        ARGS --cpp_out=${GENERATED_SRC_DIR} -I ${PROTO_SRC_DIR} ${PROTO_FILE}
-        DEPENDS ${PROTO_FILE}
-        COMMENT "Running protobuf compiler on ${PROTO_FILE}"
-        VERBATIM
+                --cpp_out=${GENERATED_SRC_DIR}
+                -I ${PROTO_SRC_DIR}
+                ${PROTO_FILE}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        RESULT_VARIABLE PROTOBUF_RESULT
+        ERROR_VARIABLE PROTOBUF_ERROR
     )
+    if(NOT PROTOBUF_RESULT EQUAL 0)
+        message(FATAL_ERROR "Protobuf compilation failed: ${PROTOBUF_ERROR}")
+    endif()
 
-    # gRPC generation command
-    set(GRPC_CMD "${Protobuf_PROTOC_EXECUTABLE} --grpc_out=${GENERATED_SRC_DIR} --plugin=protoc-gen-grpc=${gRPC_CPP_PLUGIN_EXECUTABLE} -I ${PROTO_SRC_DIR} ${PROTO_FILE}")
-    message(STATUS "gRPC Command: ${GRPC_CMD}")
-
-    add_custom_command(
-        OUTPUT ${GENERATED_SRC_DIR}/${PROTO_FILE_NAME}.grpc.pb.cc ${GENERATED_SRC_DIR}/${PROTO_FILE_NAME}.grpc.pb.h
+    # gRPC generation
+    execute_process(
         COMMAND ${Protobuf_PROTOC_EXECUTABLE}
-        ARGS --grpc_out=${GENERATED_SRC_DIR} --plugin=protoc-gen-grpc=${gRPC_CPP_PLUGIN_EXECUTABLE} -I ${PROTO_SRC_DIR} ${PROTO_FILE}
-        DEPENDS ${PROTO_FILE}
-        COMMENT "Running gRPC compiler on ${PROTO_FILE}"
-        VERBATIM
+                --grpc_out=${GENERATED_SRC_DIR}
+                --plugin=protoc-gen-grpc=${gRPC_CPP_PLUGIN_EXECUTABLE}
+                -I ${PROTO_SRC_DIR}
+                ${PROTO_FILE}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        RESULT_VARIABLE GRPC_RESULT
+        ERROR_VARIABLE GRPC_ERROR
     )
+    if(NOT GRPC_RESULT EQUAL 0)
+        message(FATAL_ERROR "gRPC compilation failed: ${GRPC_ERROR}")
+    endif()
 endforeach()
 
 # Collect all generated files

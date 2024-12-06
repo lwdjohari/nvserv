@@ -71,6 +71,8 @@ set(gRPC_BUILD_GRPC_PHP_PLUGIN OFF CACHE BOOL "" FORCE)    # Skip PHP
 set(gRPC_BUILD_GRPC_PYTHON_PLUGIN OFF CACHE BOOL "" FORCE) # Skip Python
 set(gRPC_BUILD_GRPC_RUBY_PLUGIN OFF CACHE BOOL "" FORCE)   # Skip Ruby
 
+set(gRPC_CPP_PLUGIN_EXECUTABLE "${grpc_BINARY_DIR}/grpc_cpp_plugin")
+set(Protobuf_PROTOC_EXECUTABLE "${protobuf_BINARY_DIR}/protoc")
 
 # Use bundled dependencies for consistency
 set(gRPC_USE_BUNDLED_PROTOBUF ON CACHE BOOL "" FORCE)
@@ -81,9 +83,27 @@ FetchContent_MakeAvailable(gRPC)
 
 message(STATUS "gRPC source: ${grpc_SOURCE_DIR}")
 message(STATUS "gRPC binary: ${grpc_BINARY_DIR}")
+message(STATUS "gRPC-cpp plugin: ${gRPC_CPP_PLUGIN_EXECUTABLE}")
+
+option(NVSERV_LIB_GRPC "" OFF)
+option(NVSERV_LIB_GRPC_CPP "" OFF)
+option(NVSERV_LIB_GRPC_CPP_UNSECURE "" OFF)
+option(NVSERV_LIB_GRPC_CPP_REFLECTION "" OFF)
+option(NVSERV_LIB_GRPC_CPP_PLUGIN_EXECUTABLE "" OFF)
+option(NVSERV_LIB_GRPC_CPP_PROTOC_EXECUTABLE "" OFF)
+option(NVSERV_LIB_GRPC_FOUND "" OFF)
+option(NVSERV_LIB_GRPC_PLUGIN_FOUND "" OFF)
+option(NVSERV_LIB_GRPC_GENERATOR_FOUND "" OFF)
+
+set(NVSERV_LIB_GRPC OFF)
+set(NVSERV_LIB_GRPC_CPP OFF)
+set(NVSERV_LIB_GRPC_CPP_UNSECURE OFF)
+set(NVSERV_LIB_GRPC_CPP_REFLECTION OFF)
+
 
 if (TARGET grpc)
     message(STATUS "gRPC: gRPC lib OK")
+    set(NVSERV_LIB_GRPC ON)
 else()
     message(FATAL_ERROR "gRPC: Error gRPC  lib not found!")
 endif()
@@ -91,6 +111,7 @@ endif()
 
 if (TARGET grpc++)
     message(STATUS "gRPC: gRPC++ lib OK")
+    set(NVSERV_LIB_GRPC_CPP ON )
 else()
     message(FATAL_ERROR "gRPC: Error gRPC++ lib not found!")
 endif()
@@ -98,17 +119,49 @@ endif()
 
 if (TARGET grpc_unsecure)
     message(STATUS "gRPC: gRPC_unsecure lib OK")
+    set(NVSERV_LIB_GRPC_CPP_UNSECURE ON )
 else()
     message(FATAL_ERROR "gRPC: Error gRPC_unsecure lib not found!")
 endif()
 
 if (TARGET grpc++_reflection)
     message(STATUS "gRPC: gRPC++_reflection lib OK")
+    set(NVSERV_LIB_GRPC_CPP_REFLECTION ON )
 else()
     message(FATAL_ERROR "gRPC: Error gRPC_reflection lib not found!")
 endif()
 
 
+
+# For 1st time, protobuf protoc executable and grpc plugin is not build yet
+# Create flags to create warning in the end, so the examples or project that is
+# use Grpc not having chicken-egg problem during build
+if(NOT Protobuf_PROTOC_EXECUTABLE OR NOT EXISTS ${Protobuf_PROTOC_EXECUTABLE})
+    set(NVSERV_LIB_GRPC_CPP_PROTOC_EXECUTABLE OFF)
+else()
+    set(NVSERV_LIB_GRPC_CPP_PROTOC_EXECUTABLE ON)
+endif()
+
+if(NOT gRPC_CPP_PLUGIN_EXECUTABLE OR NOT EXISTS ${gRPC_CPP_PLUGIN_EXECUTABLE})
+    set(NVSERV_LIB_GRPC_PLUGIN_FOUND OFF )
+else()
+    set(NVSERV_LIB_GRPC_PLUGIN_FOUND ON )
+endif()
+
+if(NVSERV_LIB_GRPC AND
+    NVSERV_LIB_GRPC_CPP AND 
+    NVSERV_LIB_GRPC_CPP_UNSECURE AND 
+    NVSERV_LIB_GRPC_CPP_REFLECTION)
+    set(NVSERV_LIB_GRPC_FOUND ON )
+else()
+    set(NVSERV_LIB_GRPC_FOUND OFF )
+endif()
+
+if(Protobuf_PROTOC_EXECUTABLE AND NVSERV_LIB_GRPC_PLUGIN_FOUND)
+    set(NVSERV_LIB_GRPC_GENERATOR_FOUND ON )
+else()
+    set(NVSERV_LIB_GRPC_GENERATOR_FOUND OFF )
+endif()
 
 # Print the NVSERV FEATURES
 message(STATUS "NVSERV FEATURES.")
@@ -302,11 +355,6 @@ if(NVSERV_SERVER_GRPC)
 
 endif()
 
-# nvserv::rest
-# if(NVSERV_FEATURE_POSTGRES)
-#   add_subdirectory(src/postgres/ build-nvserv_postgres)
-# endif()
-
 
 # nvserv-server
 # final server combine all needed linking
@@ -321,9 +369,29 @@ add_subdirectory(src/server/ build-nvserv_server)
 message(STATUS "NvServ LIB Configuration Done!\n")
 set(nvserv_FOUND  ON)
 
-# if(NVSERV_BUILD_EXAMPLE)
+if(NVSERV_BUILD_EXAMPLE)
+    if(NVSERV_SERVER_REST)
 #     add_subdirectory(examples/hello-world build-examples-hello-world)
-#     add_subdirectory(examples/hello-world-grpc build-examples-hello-world-grpc)
-# endif()
+    endif()
+    if(NVSERV_SERVER_GRPC)
+        if(NVSERV_LIB_GRPC_GENERATOR_FOUND)
+            add_subdirectory(examples/hello-world-grpc build-examples-hello-world-grpc)
+        else()
+            message(STATUS " GRPC LIB & PLUGIN NEED TO BUILD FIRST! 
+    RUN BUILD!
+
+    Please build NvServ first! 
+    NvServ will build gRPC lib and 
+    plugins generator needed!.
+    Once has been built, you can build 
+    your nvserv::grpc project.
+  
+    NOTES: 
+    gRPC Plugins and Protobuf compiler 
+    only being used during build, 
+    WILL NOT INCLUDED IN NVSERV BUILD ARTIFACTS.")
+        endif()
+    endif()
+endif()
 
 message(STATUS "")
