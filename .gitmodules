@@ -1,12 +1,6 @@
 [submodule "deps/nvapi"]
 	path = deps/nvapi
 	url = https://github.com/lwdjohari/nvapi.git
-[submodule "deps/rapidjson"]
-	path = deps/rapidjson
-	url = https://github.com/Tencent/rapidjson.git
-[submodule "deps/njson"]
-	path = deps/njson
-	url = https://github.com/nlohmann/json.git
 [submodule "deps/nvlog"]
 	path = deps/nvlog
 	url = https://github.com/lwdjohari/nvlog.git
