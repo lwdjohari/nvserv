@@ -57,29 +57,50 @@ ComponentList& ComponentList::SetupServer(const std::string& server_name,
   return *this;
 }
 
-LoggerComponentRegistration& ComponentList::RegisterLogger(
-    const std::string& name) {
-  CleanUpRegistrant();
+#if NVSERV_FEATURE_POSTGRES == 1
 
-  RegisterComponentImpl(
-      "logging-component",
-      std::make_shared<ComponentHolder>(
-          "logging-component",
-          std::move(logs::Logging(resolver_, config_resolver_)), false,
-          "server::logging"));
-
-  auto logs = std::dynamic_pointer_cast<logs::Logging>(
-      GetComponent("logging-component"));
-
-  logs->Initialize(name);
-  logger_register_ =
-      std::make_shared<LoggerComponentRegistration>(*logs, *this);
-  return *logger_register_;
+ComponentList& ComponentList::RegisterStorageLayerFromConfigImpl(
+    const std::string& storage_id) {
+  return *this;
 }
 
+// ComponentList& ComponentList::RegisterStorageLayerImpl(
+//     const std::string& storage_id,
+//     nvserv::storages::StorageServerPtr&& component) {
+//   RegisterComponentImpl(storage_id, std::make_shared<ComponentHolder>(
+//                                         storage_id, std::move(component), false,
+//                                         "server::storages"));
+
+//   return *this;
+// }
+
+#endif
+
+// LoggerComponentRegistration
+
+// LoggerComponentRegistration& ComponentList::RegisterLogger(
+//     const std::string& name) {
+//   CleanUpRegistrant();
+
+//   RegisterComponentImpl(
+//       "logging-component",
+//       std::make_shared<ComponentHolder>(
+//           "logging-component",
+//           std::move(logs::Logging(resolver_, config_resolver_)), false,
+//           "server::logging"));
+
+//   auto logs = std::dynamic_pointer_cast<logs::Logging>(
+//       GetComponent("logging-component"));
+
+//   logs->Initialize(name);
+//   logger_register_ =
+//       std::make_shared<LoggerComponentRegistration>(*logs, *this);
+//   return *logger_register_;
+// }
+
 void ComponentList::CleanUpRegistrant() {
-  if (logger_register_)
-    logger_register_ = nullptr;
+  // if (logger_register_)
+  //   logger_register_ = nullptr;
 }
 
 ComponentListBasePtr ComponentLocator::InitializeImpl(
@@ -89,20 +110,3 @@ ComponentListBasePtr ComponentLocator::InitializeImpl(
 
 NVSERV_END_NAMESPACE
 
-NVSERV_BEGIN_NAMESPACE(storages)
-namespace postgres {
-
-  /**
-   * Late binding PgServer::MakePgServer
-   * Because we have to wait if 
-   * CompenentList and ComponentLocator to be available first
-   */
-  
-PgServerPtr PgServer::MakePgServer(
-    const std::string& name, std::initializer_list<PgClusterConfig> clusters,
-    uint16_t pool_min_worker, u_int16_t pool_max_worker) {
-  return nullptr;
-};
-
-}  // namespace postgres
-NVSERV_END_NAMESPACE

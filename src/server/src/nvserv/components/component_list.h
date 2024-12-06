@@ -7,8 +7,8 @@
 
 #include "nvserv/components/component.h"
 #include "nvserv/components/component_list_base.h"
-#include "nvserv/global_macro.h"
-#include "nvserv/logs/log.h"
+// #include "nvserv/global_macro.h"
+// #include "nvserv/logs/log.h"
 #if NVSERV_SERVER_GRPC == 1
 #include "nvserv/handlers/grpc_service_handler.h"
 #include "nvserv/server/grpc_server.h"
@@ -25,37 +25,37 @@
 
 NVSERV_BEGIN_NAMESPACE(components)
 
-class LoggerComponentRegistration {
- public:
-  LoggerComponentRegistration(logs::Logging& log, ComponentList& components)
-                  : log_(log), components_(components){};
+// class LoggerComponentRegistration {
+//  public:
+//   LoggerComponentRegistration(logs::Logging& log, ComponentList& components)
+//                   : log_(log), components_(components) {};
 
-  LoggerComponentRegistration& Initialize(const std::string& log_name) {
-    log_.Initialize(log_name);
-    return *this;
-  }
+//   LoggerComponentRegistration& Initialize(const std::string& log_name) {
+//     log_.Initialize(log_name);
+//     return *this;
+//   }
 
-  LoggerComponentRegistration& AddDefaultConsoleLogger(logs::LogLevel level) {
-    log_.AddDefaultConsoleLogger(level);
-    return *this;
-  }
+//   LoggerComponentRegistration& AddDefaultConsoleLogger(logs::LogLevel level) {
+//     log_.AddDefaultConsoleLogger(level);
+//     return *this;
+//   }
 
-  LoggerComponentRegistration& AddFileLogger(logs::LogLevel level,
-                                             const std::string& filename) {
-    log_.AddFileLogger(level, filename);
-    return *this;
-  };
+//   LoggerComponentRegistration& AddFileLogger(logs::LogLevel level,
+//                                              const std::string& filename) {
+//     log_.AddFileLogger(level, filename);
+//     return *this;
+//   };
 
-  ComponentList& RegisterAll(bool set_global_level = false,
-                             logs::LogLevel level = logs::LogLevel::Trace) {
-    log_.RegisterAll(set_global_level, level);
-    return components_;
-  }
+//   ComponentList& RegisterAll(bool set_global_level = false,
+//                              logs::LogLevel level = logs::LogLevel::Trace) {
+//     log_.RegisterAll(set_global_level, level);
+//     return components_;
+//   }
 
- private:
-  logs::Logging& log_;
-  ComponentList& components_;
-};
+//  private:
+//   logs::Logging& log_;
+//   ComponentList& components_;
+// };
 
 class ComponentList final : public ComponentListBase {
  public:
@@ -67,6 +67,17 @@ class ComponentList final : public ComponentListBase {
 
   template <typename TComponent>
   ComponentList& RegisterComponent();
+
+#if NVSERV_FEATURE_POSTGRES == 1
+  template <typename TDbComponent>
+  ComponentList& RegisterStorageLayerFromConfig(const std::string storage_id);
+
+  template <typename TDbComponent>
+  ComponentList& RegisterStorageLayer(
+      const std::string& storage_id,
+      nvserv::storages::StorageServerPtr&& component);
+
+#endif
 
 #if NVSERV_SERVER_REST == 1
   template <typename TComponent>
@@ -106,11 +117,22 @@ class ComponentList final : public ComponentListBase {
   ComponentList& SetupServer(const std::string& server_name, ServerType type,
                              const std::string& host, uint32_t port);
 
-  LoggerComponentRegistration& RegisterLogger(const std::string& name);
+  // LoggerComponentRegistration& RegisterLogger(const std::string& name);
 
  private:
-  std::shared_ptr<LoggerComponentRegistration> logger_register_;
+  // std::shared_ptr<LoggerComponentRegistration> logger_register_;
   void CleanUpRegistrant();
+
+  // #Nvserv NVQL Component Registration
+
+  ComponentList& RegisterStorageLayerFromConfigImpl(
+      const std::string& storage_id);
+
+  ComponentList& RegisterStorageLayerImpl(
+      const std::string& storage_id,
+      nvserv::storages::StorageServerPtr&& component);
+
+  // #Nvserv NVQL Component Registration
 };
 
 template <typename TComponent>
