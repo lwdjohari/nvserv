@@ -8,6 +8,16 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+
+# Versioning
+option(NVSERV_LIBRARY_VERSION 0.6.2)
+option(NVSERV_LIBRARY_SOVERSION 0)
+set(NVSERV_LIBRARY_VERSION 0.6.2)
+set(NVSERV_LIBRARY_SOVERSION 0)
+
+option(NVSERV_BUILD_LOCAL_SHARED ON)
+option(NVSERV_BUILD_STATIC OFF)
+
 # Main server development options
 option(NVSERV_SERVER_REST  "Develop for server-side or REST API server" ON)
 option(NVSERV_SERVER_GRPC "Develop for GRPC server" OFF)
@@ -74,6 +84,12 @@ set(gRPC_BUILD_GRPC_RUBY_PLUGIN OFF CACHE BOOL "" FORCE)   # Skip Ruby
 set(gRPC_CPP_PLUGIN_EXECUTABLE "${grpc_BINARY_DIR}/grpc_cpp_plugin")
 set(Protobuf_PROTOC_EXECUTABLE "${protobuf_BINARY_DIR}/protoc")
 
+# Workaround for gRPC when using FetchContent > v1.54.0
+# --------------------------------------------------------
+# set(protobuf_INSTALL OFF)
+# set(utf8_range_ENABLE_INSTALL OFF)
+# set(ABSL_ENABLE_INSTALL ON)
+
 # Use bundled dependencies for consistency
 set(gRPC_USE_BUNDLED_PROTOBUF ON CACHE BOOL "" FORCE)
 set(gRPC_USE_BUNDLED_ABSEIL ON CACHE BOOL "" FORCE)
@@ -99,8 +115,6 @@ set(NVSERV_LIB_GRPC OFF)
 set(NVSERV_LIB_GRPC_CPP OFF)
 set(NVSERV_LIB_GRPC_CPP_UNSECURE OFF)
 set(NVSERV_LIB_GRPC_CPP_REFLECTION OFF)
-
-
 
 
 if (TARGET grpc)
@@ -132,7 +146,6 @@ if (TARGET grpc++_reflection)
 else()
     message(FATAL_ERROR "gRPC: Error gRPC_reflection lib not found!")
 endif()
-
 
 
 # For 1st time, protobuf protoc executable and grpc plugin is not build yet
@@ -220,6 +233,7 @@ option(NVSERV_USE_TEST ON)
 option(NVSERV_BUILD_EXAMPLE ON)
 
 if(ISROOT)
+  set(NVSERV_BUILD_LOCAL_SHARED ON)
   set(NVSERV_USE_CATCH ON)
   set(NVSERV_USE_TEST ON)
   set(NVSERV_BUILD_EXAMPLE ON)
@@ -282,11 +296,13 @@ else ()
 endif ()
 
 if (NOT nvcore_FOUND)
+    set(NVCORE_BUILD_SHARED ON)
     add_subdirectory(deps/nvcore build-nvcore)
 endif()
 
 
 #nvserv-core
+
 add_subdirectory(deps/nvql/deps/nvserv-core/ build-nvserv_core)
 add_subdirectory(deps/nvql build-nvql)
 

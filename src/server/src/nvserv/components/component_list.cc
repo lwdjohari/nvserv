@@ -103,10 +103,10 @@ void ComponentList::CleanUpRegistrant() {
   //   logger_register_ = nullptr;
 }
 
-ComponentListBasePtr ComponentLocator::InitializeImpl(
-    ComponentLocator& resolver, ComponentConfig& configs) {
-  return std::make_shared<ComponentList>(resolver, configs);
-}
+// ComponentListBasePtr ComponentLocator:: InitializeImpl(
+//     ComponentLocator& resolver, ComponentConfig& configs) {
+//   return std::make_shared<ComponentList>(resolver, configs);
+// }
 
 NVSERV_END_NAMESPACE
 

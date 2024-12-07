@@ -19,9 +19,13 @@ class MainExecutionContext final {
                         *configs_)),
                     server_component_(nullptr),
                     name_(std::string(name)),
-                    type_() {}
+                    type_() {
+    components::ComponentListPtr component_list =
+        std::make_shared<components::ComponentList>(*resolver_, *configs_);
+    resolver_->AttachComponentList(std::move(component_list));
+  }
 
-  virtual ~MainExecutionContext(){};
+  virtual ~MainExecutionContext() {};
 
   components::ComponentLocatorPtr ComponentResolver() {
     return resolver_;

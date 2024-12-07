@@ -142,6 +142,7 @@ target_link_libraries(${PROJECT_NAME}
     PUBLIC
         nvserv::core
         nvserv::grpc
+        nvserv::storage
         nvserv::postgres
         nvserv::server
         ${GRPC_LIBRARIES} 
