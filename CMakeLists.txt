@@ -296,6 +296,7 @@ else ()
 endif ()
 
 if (NOT nvcore_FOUND)
+    set(NVCORE_BUILD_STATIC OFF)
     set(NVCORE_BUILD_SHARED ON)
     add_subdirectory(deps/nvcore build-nvcore)
 endif()
