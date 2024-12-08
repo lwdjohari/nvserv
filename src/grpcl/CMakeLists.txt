@@ -16,6 +16,7 @@ file(GLOB_RECURSE SOURCES_NVSERV_GRPC CONFIGURE_DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/src/*.s
 )
 
+
 # Convert the list to a comma-separated string
 string(JOIN ", " GRPC_LIB_JOIN ${GRPC_LIBRARIES})
 
@@ -32,18 +33,18 @@ target_link_libraries(${PROJECT_NAME}_grpc
 
 # Set runtime path for the shared library
 if(NVSERV_BUILD_LOCAL_SHARED)
-    set_target_properties(${PROJECT_NAME}_core PROPERTIES
+    set_target_properties(${PROJECT_NAME}_grpc PROPERTIES
         LINKER_LANGUAGE CXX
-        BUILD_RPATH "$ORIGIN"                   # Use the directory of the binary
-        INSTALL_RPATH "$ORIGIN"                 # Set for installed binaries too
-        BUILD_WITH_INSTALL_RPATH TRUE           # Ensure RPATH is embedded during the build
+        # BUILD_RPATH "$ORIGIN"                   # Use the directory of the binary
+        # INSTALL_RPATH "$ORIGIN"                 # Set for installed binaries too
+        # BUILD_WITH_INSTALL_RPATH TRUE           # Ensure RPATH is embedded during the build
         VERSION ${NVSERV_LIBRARY_VERSION}       # Semantic Version of library
         SOVERSION ${NVSERV_LIBRARY_SOVERSION}   # Linker version for sysmlink
     )
 endif()
 
 if(NVSERV_BUILD_STATIC)
-    set_target_properties(${PROJECT_NAME}_core PROPERTIES
+    set_target_properties(${PROJECT_NAME}_grpc PROPERTIES
         LINKER_LANGUAGE CXX
     )
 endif()

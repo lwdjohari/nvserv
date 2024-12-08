@@ -12,14 +12,15 @@
 
 NVSERV_BEGIN_NAMESPACE(handlers)
 
-// class RpcMethodHandlerBase {
-//  public:
-//   virtual ~RpcMethodHandlerBase() = default;
-//   // Pure virtual method to handle the gRPC request
-//   virtual grpc::Status HandleRequest(grpc::ServerContext* context,
-//                                      const grpc::ByteBuffer* request,
-//                                      grpc::ByteBuffer* response) const = 0;
-// };
+class RpcMethodHandlerBase {
+ public:
+  explicit RpcMethodHandlerBase();
+  virtual ~RpcMethodHandlerBase();
+  // Pure virtual method to handle the gRPC request
+  virtual grpc::Status HandleRequest(grpc::ServerContext* context,
+                                     const grpc::ByteBuffer* request,
+                                     grpc::ByteBuffer* response);
+};
 
 // template <typename ...TRequestType>
 // class RpcMethodHandler : public RpcMethodHandlerBase {

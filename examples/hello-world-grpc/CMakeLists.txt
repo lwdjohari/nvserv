@@ -137,7 +137,37 @@ file(GLOB_RECURSE NV_REST_EXAM2 CONFIGURE_DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/src/*.s
 )
 
-add_executable(${PROJECT_NAME} ${NV_REST_EXAM2} ${GENERATED_SRCS})
+add_library(${PROJECT_NAME}_lib SHARED ${NV_REST_EXAM2} ${GENERATED_SRCS})
+target_link_libraries(${PROJECT_NAME}_lib
+    PUBLIC
+        nvserv::core
+        nvserv::grpc
+        nvserv::storage
+        nvserv::postgres
+        nvserv::server
+        # ${GRPC_LIBRARIES} 
+)
+
+# Set runtime path for the shared library
+if(NVSERV_BUILD_LOCAL_SHARED)
+    set_target_properties(${PROJECT_NAME}_lib PROPERTIES
+        LINKER_LANGUAGE CXX
+        # BUILD_RPATH "$ORIGIN"                   # Use the directory of the binary
+        # INSTALL_RPATH "$ORIGIN"                 # Set for installed binaries too
+        # BUILD_WITH_INSTALL_RPATH TRUE           # Ensure RPATH is embedded during the build
+        VERSION ${NVSERV_LIBRARY_VERSION}       # Semantic Version of library
+        SOVERSION ${NVSERV_LIBRARY_SOVERSION}   # Linker version for sysmlink
+    )
+endif()
+
+target_compile_features(${PROJECT_NAME}_lib PUBLIC ${CXX_FEATURE})
+target_include_directories(${PROJECT_NAME}_lib
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/
+        ${GENERATED_SRC_DIR}
+)
+
+add_executable(${PROJECT_NAME} main.cc)
 target_link_libraries(${PROJECT_NAME}
     PUBLIC
         nvserv::core
@@ -145,7 +175,8 @@ target_link_libraries(${PROJECT_NAME}
         nvserv::storage
         nvserv::postgres
         nvserv::server
-        ${GRPC_LIBRARIES} 
+        ${PROJECT_NAME}_lib
+        # ${GRPC_LIBRARIES} 
 )
 set_target_properties(${PROJECT_NAME} PROPERTIES LINKER_LANGUAGE CXX)
 target_compile_features(${PROJECT_NAME} PUBLIC ${CXX_FEATURE})
