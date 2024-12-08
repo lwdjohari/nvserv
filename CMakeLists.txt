@@ -49,7 +49,7 @@ option(NVSERV_FEATURE_VM_V8 "Server Side V8 Javascript engine" OFF)
 option(NVSERV_LIBS_ABSL_USE_BUNDLE "Use Abseil that is bundled with NvServ" ON)
 
 option(NVSERV_LIB_NGHTTPX "Tell nghttp2 to use nvserv specific cmake, not the bundle one" ON)
-
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # GRPC
 # gRpc already have dependencies to Abseil, BoringSSL
 # so when it use or not we need this dependencies from grpc
