@@ -178,32 +178,7 @@ else()
     set(NVSERV_LIB_GRPC_GENERATOR_FOUND OFF )
 endif()
 
-# Print the NVSERV FEATURES
-message(STATUS "NVSERV FEATURES.")
-message(STATUS "Core: ON")
 
-if(NVSERV_SERVER_REST)
-  message(STATUS "REST Server: ${NVSERV_SERVER_REST}")
-endif()
-
-if(NVSERV_SERVER_GRPC)
-  message(STATUS "GRPC Server: ${NVSERV_SERVER_GRPC}")
-endif()
-
-if(NVSERV_SERVER_SOCKET)
-  message(STATUS "SOCKET Server: ${NVSERV_SERVER_SOCKET}")
-endif()
-
-if(NVSERV_FEATURE_POSTGRES)
-  message(STATUS "Postgres support: ${NVSERV_FEATURE_POSTGRES}")
-endif()
-
-if(NVSERV_FEATURE_API_CLIENT)
-  message(STATUS "HTTP & API Client support: ${NVSERV_FEATURE_API_CLIENT}")
-endif()
-
-
-message(STATUS "")
 
 message(STATUS "NvServ LIB DIR:${CMAKE_CURRENT_SOURCE_DIR}")
 
@@ -240,9 +215,37 @@ if(ISROOT)
   set(NVSERV_SERVER_GRPC ON)
   set(NVSERV_SERVER_REST ON)
   set(NVSERV_FEATURE_POSTGRES ON)
-
+  set(NVSERV_SERVER_SOCKET ON)
 endif()
 
+
+# Print the NVSERV FEATURES
+message(STATUS "")
+message(STATUS "NVSERV FEATURES.")
+message(STATUS "Core: ON")
+
+if(NVSERV_SERVER_REST)
+  message(STATUS "REST Server: ${NVSERV_SERVER_REST}")
+endif()
+
+if(NVSERV_SERVER_GRPC)
+  message(STATUS "GRPC Server: ${NVSERV_SERVER_GRPC}")
+endif()
+
+if(NVSERV_SERVER_SOCKET)
+  message(STATUS "SOCKET Server: ${NVSERV_SERVER_SOCKET}")
+endif()
+
+if(NVSERV_FEATURE_POSTGRES)
+  message(STATUS "Postgres support: ${NVSERV_FEATURE_POSTGRES}")
+endif()
+
+if(NVSERV_FEATURE_API_CLIENT)
+  message(STATUS "HTTP & API Client support: ${NVSERV_FEATURE_API_CLIENT}")
+endif()
+
+
+message(STATUS "")
 # Add ASAN
 if(NVSERV_SANITIZE_ADDRESS)
     set(SANITIZE_ADDRESS ON)
@@ -374,6 +377,10 @@ if(NVSERV_SERVER_GRPC)
 
 endif()
 
+
+if(NVSERV_SERVER_SOCKET)
+add_subdirectory(src/socket/ build-nvserv_socket)
+endif()
 
 # nvserv-server
 # final server combine all needed linking
