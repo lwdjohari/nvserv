@@ -16,3 +16,6 @@
 [submodule "deps/nghttp2-override/nghttp2"]
 	path = deps/nghttp2-override/nghttp2
 	url = https://github.com/nghttp2/nghttp2.git
+[submodule "deps/boost"]
+	path = deps/boost
+	url = https://github.com/boostorg/boost.git
