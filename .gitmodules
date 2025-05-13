@@ -7,9 +7,6 @@
 [submodule "deps/nvcore"]
 	path = deps/nvcore
 	url = https://github.com/lwdjohari/nvcore.git
-[submodule "deps/asio"]
-	path = deps/asio
-	url = https://github.com/chriskohlhoff/asio.git
 [submodule "deps/nvql"]
 	path = deps/nvql
 	url = https://github.com/lwdjohari/nvql.git
