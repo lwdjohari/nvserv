@@ -23,6 +23,10 @@
 #include "nvserv/handlers/http_json_handler.h"
 #endif
 
+#if NVSERV_SERVER_SOCKET == 1
+#include "nvserv/handlers/tcp_handler.h"
+#endif
+
 NVSERV_BEGIN_NAMESPACE(components)
 
 // class LoggerComponentRegistration {

@@ -3,8 +3,8 @@
 #include <nvserv/global.h>
 #include <nvserv/ssl/ssl.h>
 
-#include <asio.hpp>
-#include <asio/ssl.hpp>
+#include <boost/asio.hpp>
+#include <boost/asio/ssl.hpp>
 #include <chrono>
 #include <functional>
 #include <iostream>
@@ -14,9 +14,9 @@
 #include <thread>
 #include <unordered_map>
 
-using asio::ip::tcp;
+using boost::asio::ip::tcp;
 
-NVSERV_BEGIN_NAMESPACE(ssl)
+NVSERV_BEGIN_NAMESPACE(handlers)
 
 struct TcpServerConfig {
   bool non_blocking = true;
@@ -35,16 +35,16 @@ struct TcpSession {
   std::array<char, 4096> buffer;
   std::chrono::steady_clock::time_point last_active;
   std::string ip;
-  std::unique_ptr<asio::ssl::stream<tcp::socket>> ssl_socket;
+  std::unique_ptr<boost::asio::ssl::stream<tcp::socket>> ssl_socket;
 
-  explicit TcpSession(asio::io_context& io_ctx, std::string client_ip,
-                      asio::ssl::context& ssl_ctx, bool use_ssl)
+  explicit TcpSession(boost::asio::io_context& io_ctx, std::string client_ip,
+                      boost::asio::ssl::context& ssl_ctx, bool use_ssl)
                   : socket(io_ctx),
                     ip(std::move(client_ip)),
                     last_active(std::chrono::steady_clock::now()),
                     ssl_socket(nullptr) {
     if (use_ssl) {
-      ssl_socket = std::make_unique<asio::ssl::stream<tcp::socket>>(
+      ssl_socket = std::make_unique<boost::asio::ssl::stream<tcp::socket>>(
           std::move(socket), ssl_ctx);
     }
   }
@@ -52,7 +52,7 @@ struct TcpSession {
 
 class TcpServerHandler {
  public:
-  TcpServerHandler(asio::io_context& io_context, uint16_t port,
+  TcpServerHandler(boost::asio::io_context& io_context, uint16_t port,
                 const TcpServerConfig& config);
 
   void StartAccept();
@@ -63,10 +63,10 @@ class TcpServerHandler {
   void OnDisconnect(std::shared_ptr<TcpSession> session);
 
  private:
-  asio::io_context& io_context_;
+  boost::asio::io_context& io_context_;
   tcp::acceptor acceptor_;
   TcpServerConfig config_;
-  asio::ssl::context ssl_context_;
+  boost::asio::ssl::context ssl_context_;
   std::unordered_map<std::string, std::queue<std::shared_ptr<TcpSession>>>
       clients_;
   std::unordered_map<std::string,
@@ -77,7 +77,7 @@ class TcpServerHandler {
 NVSERV_END_NAMESPACE
 
 // int main() {
-//   asio::io_context io_context;
+//   boost::asio::io_context io_context;
 //   TcpServerHandler::TcpServerConfig config;
 //   config.use_ssl = true;
 //   TcpServerHandler server(io_context, 8080, config);

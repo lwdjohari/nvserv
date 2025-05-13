@@ -6,7 +6,7 @@ project(nvserv CXX)
 
 
 message(STATUS "Nvserv Socket: ON")
-
+message(STATUS "---------------------------------")
 include(ProjectCXX)
 set(ISROOT FALSE)
 NV_DETECT_IS_ROOT_PROJECT(ISROOT)
@@ -25,26 +25,31 @@ find_package(Threads REQUIRED)
 
 
 if (TARGET absl::base)
-    message(STATUS "Nvrest lib ABSL: Abseil lib are already set, use ABSL from project.")
+    message(STATUS "Nvserv::socket lib ABSL: Abseil lib are already set, use ABSL from project.")
 else ()
-    message(STATUS "Nvrest lib ABSL: FATAL ERROR Abseil not found!")
+    message(STATUS "Nvserv::socket lib ABSL: FATAL ERROR Abseil not found!")
 endif ()
 
 
 
 if(NOT nvcore_FOUND)
-    message(STATUS "Nvserv::rest lib nvcore: Initialize NvCore lib.")
+    message(STATUS "Nvserv::socket lib nvcore: Initialize NvCore lib.")
     add_subdirectory(deps/nvcore/ build-nvcore)
 else()
-    message(STATUS "Nvserv::rest lib nvcore: nvcore lib are already set, use nvcore from project.")
+    message(STATUS "Nvserv::socket lib nvcore: nvcore lib are already set, use nvcore from project.")
 endif()
 
 #asio
 
 # Prevent multiple inclusion by checking if Asio is already added
-set(ASIO_SOURCE_DIR "${CMAKE_SOURCE_DIR}/deps/asio")
-add_definitions(-DASIO_STANDALONE)
+set(ASIO_SOURCE_DIR "${CMAKE_SOURCE_DIR}/deps/boost")
+# add_definitions(-DASIO_STANDALONE)
+add_compile_definitions(
+    BOOST_ASIO_NO_DEPRECATED
+    BOOST_ERROR_CODE_HEADER_ONLY
+)
 
+add_compile_options(-isystem ${ASIO_SOURCE_DIR})
 #Main headers and sources
 file(GLOB_RECURSE SOURCES_NVSERV_REST CONFIGURE_DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h
@@ -66,8 +71,7 @@ target_compile_features(${PROJECT_NAME}_socket PUBLIC ${CXX_FEATURE})
 target_include_directories(${PROJECT_NAME}_socket
     PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/src/
-    PRIVATE
-        ${ASIO_SOURCE_DIR}/asio/include
+        ${ASIO_SOURCE_DIR}/include
 )
 
 

@@ -1,21 +1,21 @@
 #include "nvserv/handlers/tcp_handler.h"
 
-NVSERV_BEGIN_NAMESPACE(ssl)
+NVSERV_BEGIN_NAMESPACE(handlers)
 
-TcpServerHandler::TcpServerHandler(asio::io_context& io_context, uint16_t port,
+TcpServerHandler::TcpServerHandler(boost::asio::io_context& io_context, uint16_t port,
                                    const TcpServerConfig& config)
                 : io_context_(io_context),
                   acceptor_(io_context, tcp::endpoint(tcp::v4(), port)),
                   config_(config),
-                  ssl_context_(asio::ssl::context::sslv23) {
+                  ssl_context_(boost::asio::ssl::context::sslv23) {
   if (config_.ssl_is_use) {
-    ssl_context_.set_options(asio::ssl::context::default_workarounds |
-                             asio::ssl::context::no_sslv2 |
-                             asio::ssl::context::single_dh_use);
+    ssl_context_.set_options(boost::asio::ssl::context::default_workarounds |
+                             boost::asio::ssl::context::no_sslv2 |
+                             boost::asio::ssl::context::single_dh_use);
     ssl_context_.use_certificate_file(config_.ssl_certificate_public_path,
-                                      asio::ssl::context::pem);
+                                      boost::asio::ssl::context::pem);
     ssl_context_.use_private_key_file(config_.ssl_certificate_private_path,
-                                      asio::ssl::context::pem);
+                                      boost::asio::ssl::context::pem);
   }
   StartAccept();
 }
@@ -30,7 +30,7 @@ void TcpServerHandler::StartAccept() {
         clients_[session->ip].push(session);
         if (config_.ssl_is_use) {
           session->ssl_socket->async_handshake(
-              asio::ssl::stream_base::server,
+              boost::asio::ssl::stream_base::server,
               [this, session](std::error_code ec) {
                 if (!ec)
                   HandleClient(session);
@@ -51,7 +51,7 @@ void TcpServerHandler::StartAccept() {
 void TcpServerHandler::HandleClient(std::shared_ptr<TcpSession> session) {
   //auto self = shared_from_this();
   session->socket.async_read_some(
-      asio::buffer(session->buffer),
+      boost::asio::buffer(session->buffer),
       [this, session](std::error_code ec, std::size_t length) {
         if (!ec) {
           session->last_active = std::chrono::steady_clock::now();

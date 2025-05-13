@@ -418,6 +418,10 @@ if(NVSERV_BUILD_EXAMPLE)
     WILL NOT INCLUDED IN NVSERV BUILD ARTIFACTS.")
         endif()
     endif()
+
+    if(NVSERV_SERVER_REST)
+        add_subdirectory(examples/hello-world-tcp build-examples-hello-world-tcp)
+    endif()
 endif()
 
 message(STATUS "")
